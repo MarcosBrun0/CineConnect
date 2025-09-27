@@ -37,45 +37,6 @@ public class UserController {
                     .orElse(ResponseEntity.notFound().build());
         }
 
-        // POST /api/usuarios
-        @PostMapping
-        @ResponseStatus(HttpStatus.CREATED)
-        public Usuario create(@RequestBody Usuario usuario) {
-            // Cria um novo usuário, o ID será gerado
-            Usuario usuarioParaSalvar = new Usuario(null, usuario.nome(), usuario.email());
-            return usuarioRepository.save(usuarioParaSalvar);
-        }
 
-        // PUT /api/usuarios/{id}
-        @PutMapping("/{id}")
-        public ResponseEntity<Usuario> update(@PathVariable Integer id, @RequestBody Usuario usuario) {
-            // Verifica se o usuário existe antes de tentar atualizar
-            if (usuarioRepository.findById(id).isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-
-            // Cria o objeto Usuario com o ID da URI para atualização
-            Usuario usuarioParaAtualizar = new Usuario(id, usuario.nome(), usuario.email());
-            int linhasAfetadas = usuarioRepository.update(usuarioParaAtualizar);
-
-            if (linhasAfetadas == 1) {
-                return ResponseEntity.ok(usuarioParaAtualizar);
-            } else {
-                return ResponseEntity.internalServerError().build(); // Ou outro erro, se necessário
-            }
-        }
-
-        // DELETE /api/usuarios/{id}
-        @DeleteMapping("/{id}")
-        @ResponseStatus(HttpStatus.NO_CONTENT)
-        public ResponseEntity<Void> delete(@PathVariable Integer id) {
-            int linhasAfetadas = usuarioRepository.deleteById(id);
-
-            if (linhasAfetadas == 1) {
-                return ResponseEntity.noContent().build();
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        }
     }
 }
