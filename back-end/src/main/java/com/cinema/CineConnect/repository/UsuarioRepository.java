@@ -2,6 +2,7 @@ package com.cinema.CineConnect.repository;
 
 import com.cinema.CineConnect.model.Usuario;
 import org.springframework.jdbc.core.simple.JdbcClient;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,20 +22,20 @@ public class UsuarioRepository {
      * Salva um novo usuário (INSERT)
      */
     public Usuario save(Usuario usuario) {
-        // Usa `queryForObject` com `Long.class` para obter o ID gerado (retorna 1 linha e 1 coluna)
-        Long novoId = jdbcClient.sql("INSERT INTO usuario (nome, email) VALUES (:nome, :email)")
+        var keyHolder = new GeneratedKeyHolder();
+
+        jdbcClient.sql("INSERT INTO usuario (nome, email) VALUES (:nome, :email)")
                 .param("nome", usuario.nome())
                 .param("email", usuario.email())
-                .update()
-                .call()
-                .getKeys()
-                .stream()
-                .findFirst()
-                .map(key -> (Long) key)
+                .update(keyHolder, "id"); // informa a coluna da PK
+
+        Long novoId = Optional.ofNullable(keyHolder.getKey())
+                .map(Number::longValue)
                 .orElseThrow(() -> new RuntimeException("Falha ao obter ID gerado"));
 
         return new Usuario(novoId.intValue(), usuario.nome(), usuario.email());
     }
+
 
     /**
      * Busca todos os usuários (SELECT * )
