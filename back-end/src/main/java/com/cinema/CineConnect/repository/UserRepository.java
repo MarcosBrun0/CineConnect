@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class UserRepository {
@@ -39,13 +40,14 @@ public class UserRepository {
 
     }
 
-    @Bean
-    ApplicationRunner runner(UserRepository userRepository){
-        return args -> {
-            var usuarioteste = new UserRecord("nome teste","email teste");
-            userRepository.save(usuarioteste);
-            System.out.println(userRepository.findAll());
-        };
+    public Optional<Usuario> findByEmail(String email) {
+        String sql = "SELECT id, nome, email FROM usuario WHERE email = :email";
+        // .optional() retorna um Optional.empty() se nenhum resultado for encontrado
+        return jdbcClient.sql(sql)
+                .param("email", email)
+                .query(Usuario.class)
+                .optional();
     }
+
 
 }
