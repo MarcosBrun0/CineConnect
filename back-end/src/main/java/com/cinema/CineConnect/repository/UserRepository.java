@@ -48,6 +48,4 @@ public class UserRepository {
                 .query(Usuario.class)
                 .optional();
     }
-
-
 }
