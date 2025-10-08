@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class MovieRepository {
@@ -20,5 +21,9 @@ public class MovieRepository {
         return jdbcClient.sql("SELECT * FROM public.movies")
                 .query(Movie.class)
                 .list();
+    }
+    public Optional<Movie> findByName(String name){
+        return jdbcClient.sql("SELECT * FROM public.movies WHERE name = :name").param("name",name).query(Movie.class).optional();
+
     }
 }
