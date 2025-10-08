@@ -1,24 +1,23 @@
 package com.cinema.CineConnect.repository;
 
-import com.cinema.CineConnect.model.Movie;
+import com.cinema.CineConnect.model.Client;
+import com.cinema.CineConnect.model.Usuario;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
 @Repository
-public class MovieRepository {
+public class ClientRepository {
 
     private final JdbcClient jdbcClient;
-
-    public MovieRepository(JdbcClient jdbcClient) {
+    public ClientRepository(JdbcClient jdbcClient) {
         this.jdbcClient = jdbcClient;
-
     }
 
-    public List<Movie> findAll(){
-        return jdbcClient.sql("SELECT * FROM public.movies")
-                .query(Movie.class)
+    public List<Client> findAll() {
+        return jdbcClient.sql("SELECT * FROM client")
+                .query(Client.class)
                 .list();
     }
+
 }
