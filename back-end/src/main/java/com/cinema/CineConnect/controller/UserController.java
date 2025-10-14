@@ -27,7 +27,7 @@ import java.util.List;
             return userRepository.findAll();
         }
 //
-//        //    GET /api/usuarios/{id}
+//        // GET /api/usuarios/{id}
 //        @GetMapping("/{id}")
 //        public ResponseEntity<Usuario> findById(@PathVariable Integer id) {
 //            return userRepository.findById(id)
