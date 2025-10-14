@@ -1,8 +1,8 @@
-import { Anchor, PasswordInput, Text, TextInput, Flex, Button, Card} from '@mantine/core';
+import { Anchor, PasswordInput, Text, TextInput, Stack, Button, Card} from '@mantine/core';
 import { useForm } from '@mantine/form';
 
 
-function Login() {
+function UserLogin() {
 
     const form = useForm(
         {
@@ -13,7 +13,6 @@ function Login() {
             },
 
         });
-
     return (
         <div>
             <Card
@@ -21,34 +20,22 @@ function Login() {
             withBorder
             radius="md"
             >
-            <Flex
-                justify="space-between"
-                direction='column'
-                p="sm"
-            >
 
-                <form onSubmit={form.onSubmit((values) => console.log(values))}>
-                    <Text component="label" htmlFor="your-email" size="sm" pb="xs" fw={500}>
-                    Your Email
-                </Text>
-
+            <div>
+            <form onSubmit={form.onSubmit((values) => console.log(values))}>
+            <Stack gap="sm">
             <TextInput
+                label="Your email"
                 placeholder="youremail@example.com"
-                key={form.key('email')}
                 {...form.getInputProps('email')}
                 id="your-email"
-                pb="xs">
+                />
 
-            </TextInput>
 
-                <Text component="label" htmlFor="your-password" size="sm" pb="xs" fw={500}>
-                    Your password
 
-                </Text>
-
-                    <PasswordInput placeholder="Your password"
+            <PasswordInput placeholder="Your password"
+                                   label="Your password"
                                    id="your-password"
-                                   key={form.key('password')}
                                    {...form.getInputProps('password')}                                   pb="xs"
                     />
 
@@ -56,10 +43,14 @@ function Login() {
                 <Button
                 type="submit"
                 radius="md"
-                mt="md"
+
                 >Login</Button>
 
+
+                </Stack>
                 </form>
+            </div>
+
                 <Card.Section
                     withBorder
                     inheritPadding
@@ -75,13 +66,12 @@ function Login() {
                         ml="lg"
                         onClick={(event) => event.preventDefault()} pt={2} fw={500} fz="xs"
                 >
-
                     Forgot your password?
                 </Anchor>
                 </Card.Section>
 
 
-            </Flex>
+
             </Card>
 
         </div>
@@ -89,4 +79,4 @@ function Login() {
     );
 }
 
-export default Login
+export default UserLogin
