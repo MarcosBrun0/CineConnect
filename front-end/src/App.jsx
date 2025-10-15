@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-do
 import {Form} from "@mantine/form";
 import UserLogin from "./pages/public/UserLogin"
 import Layout from './components/layout';
-
+import Homepage from './pages/public/Homepage';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -11,14 +11,20 @@ function App() {
   return (
       <Router>
           <Routes>
+
               <Route path="/user/login" element={<Layout><UserLogin/></Layout>}></Route>
               
-              <Route path="/" element={<UserLogin/>} />
-              <Route path="/user/register"></Route>
+              <Route path="/user/register">    </Route>
+
+              <Route path="/" element={<Layout><Homepage/></Layout>}></Route>
+
+              
+
           </Routes>
-              </Router>
+        </Router>
 
   )
 }
+
 
 export default App

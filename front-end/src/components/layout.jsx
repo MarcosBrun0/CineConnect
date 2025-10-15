@@ -1,15 +1,16 @@
 import React from 'react';
-import {HeaderMegaMenu} from './header';
 
+import { FooterSocial } from './Footer';
+import { HeaderSimples } from './HeaderSimples';
 
 // O 'children' é o conteúdo da página que será renderizado dentro do layout
 const Layout = ({ children }) => { 
   return (
-    <>
-      <HeaderMegaMenu />
+    <div className="layout-container">
+      <header><HeaderSimples/></header>
       <main>{children}</main>
-
-    </>
+      <footer><FooterSocial /></footer>
+    </div>
   );
 };
 
