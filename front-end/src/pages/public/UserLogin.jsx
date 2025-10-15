@@ -2,7 +2,7 @@ import { Anchor, PasswordInput, Text, TextInput, Stack, Button, Card} from '@man
 import { useForm } from '@mantine/form';
 
 
-function Login() {
+function UserLogin() {
 
     const form = useForm(
         {
@@ -79,4 +79,4 @@ function Login() {
     );
 }
 
-export default Login
+export default UserLogin

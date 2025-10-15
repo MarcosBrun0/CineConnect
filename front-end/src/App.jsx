@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';import './App.css'
 import {Form} from "@mantine/form";
-import Login from "./pages/public/Login"
+import UserLogin from "./pages/public/UserLogin"
 
 
 function App() {
@@ -10,7 +10,9 @@ function App() {
   return (
       <Router>
           <Routes>
-              <Route path="/" element={<Login/>} />
+              <Route path="/user/login" element={<UserLogin/>}></Route>
+              <Route path="/" element={<UserLogin/>} />
+              <Route path="/user/register"></Route>
           </Routes>
               </Router>
 
