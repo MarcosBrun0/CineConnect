@@ -1,7 +1,6 @@
 package com.cinema.CineConnect.repository;
 
 import com.cinema.CineConnect.model.Client;
-import com.cinema.CineConnect.model.Usuario;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
