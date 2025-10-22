@@ -4,7 +4,7 @@ import {Form} from "@mantine/form";
 import UserLogin from "./pages/public/UserLogin"
 import UserRegister from "./pages/public/UserRegister";
 import Layout from './components/layout';
-
+import Homepage from './pages/public/Homepage';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -12,14 +12,20 @@ function App() {
   return (
       <Router>
           <Routes>
+
               <Route path="/user/login" element={<Layout><UserLogin/></Layout>}></Route>
               
-              <Route path="/" element={<UserLogin/>} />
-              <Route path="/user/register" element={<UserRegister/>}></Route>
+              <Route path="/user/register" element={<Layout><UserRegister/></Layout>}></Route>
+
+              <Route path="/" element={<Layout><Homepage/></Layout>}></Route>
+
+              
+
           </Routes>
-              </Router>
+        </Router>
 
   )
 }
+
 
 export default App
