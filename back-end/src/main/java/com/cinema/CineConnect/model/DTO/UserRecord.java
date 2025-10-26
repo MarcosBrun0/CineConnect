@@ -1,6 +1,6 @@
-package com.cinema.CineConnect.model;
+package com.cinema.CineConnect.model.DTO;
 
-public record Usuario(
+public record UserRecord(
         Integer id,
         String nome,
         String email

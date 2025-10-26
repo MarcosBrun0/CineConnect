@@ -1,6 +1,6 @@
-package com.cinema.CineConnect.model;
+package com.cinema.CineConnect.model.DTO;
 
-public record Product(
+public record ProductRecord(
         Integer product_id,
         String name,
         String type,

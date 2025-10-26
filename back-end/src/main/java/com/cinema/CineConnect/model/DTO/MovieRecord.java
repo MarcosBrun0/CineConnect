@@ -1,8 +1,8 @@
-package com.cinema.CineConnect.model;// src/main/java/com/cinema/CineConnect/model/Movie.java
+package com.cinema.CineConnect.model.DTO;// src/main/java/com/cinema/CineConnect/model/MovieRecord.java
 
 import java.math.BigDecimal;
 
-public record Movie(
+public record MovieRecord(
         Integer movieId,
         String name,
         Integer duration,

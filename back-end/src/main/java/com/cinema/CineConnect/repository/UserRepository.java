@@ -1,8 +1,5 @@
 package com.cinema.CineConnect.repository;
 
-import com.cinema.CineConnect.model.Usuario;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
@@ -19,9 +16,9 @@ public class UserRepository {
     }
 
 
-    public List<Usuario> findAll() {
+    public List<com.cinema.CineConnect.model.DTO.UserRecord> findAll() {
         return jdbcClient.sql("SELECT id, nome, email FROM usuario")
-                .query(Usuario.class)
+                .query(com.cinema.CineConnect.model.DTO.UserRecord.class)
                 .list();
     }
 
@@ -40,12 +37,12 @@ public class UserRepository {
 
     }
 
-    public Optional<Usuario> findByEmail(String email) {
+    public Optional<com.cinema.CineConnect.model.DTO.UserRecord> findByEmail(String email) {
         String sql = "SELECT id, nome, email FROM usuario WHERE email = :email";
         // .optional() retorna um Optional.empty() se nenhum resultado for encontrado
         return jdbcClient.sql(sql)
                 .param("email", email)
-                .query(Usuario.class)
+                .query(com.cinema.CineConnect.model.DTO.UserRecord.class)
                 .optional();
     }
 

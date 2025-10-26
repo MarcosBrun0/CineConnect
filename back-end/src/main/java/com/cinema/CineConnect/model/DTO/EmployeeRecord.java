@@ -1,6 +1,6 @@
-package com.cinema.CineConnect.model;
+package com.cinema.CineConnect.model.DTO;
 import  java.time.LocalDate;
-public record Employee(
+public record EmployeeRecord(
     Integer id,
     String role,
     String name,

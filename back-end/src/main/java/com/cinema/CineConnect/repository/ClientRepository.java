@@ -1,7 +1,6 @@
 package com.cinema.CineConnect.repository;
 
-import com.cinema.CineConnect.model.Client;
-import com.cinema.CineConnect.model.Usuario;
+import com.cinema.CineConnect.model.DTO.ClientRecord;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
@@ -14,9 +13,9 @@ public class ClientRepository {
         this.jdbcClient = jdbcClient;
     }
 
-    public List<Client> findAll() {
+    public List<ClientRecord> findAll() {
         return jdbcClient.sql("SELECT * FROM client")
-                .query(Client.class)
+                .query(ClientRecord.class)
                 .list();
     }
 

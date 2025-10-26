@@ -1,6 +1,6 @@
 package com.cinema.CineConnect.repository;
 
-import com.cinema.CineConnect.model.Movie;
+import com.cinema.CineConnect.model.DTO.MovieRecord;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
@@ -17,13 +17,13 @@ public class MovieRepository {
 
     }
 
-    public List<Movie> findAll(){
+    public List<MovieRecord> findAll(){
         return jdbcClient.sql("SELECT * FROM public.movies")
-                .query(Movie.class)
+                .query(MovieRecord.class)
                 .list();
     }
-    public Optional<Movie> findByName(String name){
-        return jdbcClient.sql("SELECT * FROM public.movies WHERE name = :name").param("name",name).query(Movie.class).optional();
+    public Optional<MovieRecord> findByName(String name){
+        return jdbcClient.sql("SELECT * FROM public.movies WHERE name = :name").param("name",name).query(MovieRecord.class).optional();
 
     }
 }
