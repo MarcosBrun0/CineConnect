@@ -42,6 +42,7 @@ public class SecurityConfig {
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/login").permitAll()
                         // Permite acesso a todos (não autenticado) para a rota de criação de usuários
                         .requestMatchers("/api/register").permitAll()
                         // Exemplo: Rotas de Funcionários exigem papel EMPLOYEE
@@ -66,6 +67,7 @@ public class SecurityConfig {
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
+
         return new BCryptPasswordEncoder();
     }
 

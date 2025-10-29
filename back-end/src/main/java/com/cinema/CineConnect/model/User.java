@@ -1,36 +1,45 @@
 package com.cinema.CineConnect.model;
 
-public abstract class User {
-    String username;
-    String password;
-    String email;
-    String Name;
+import com.cinema.CineConnect.model.DTO.LoginRequestRecord;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-    User(String username, String password, String email, String Name) {
-        this.username = username;
+public abstract class User {
+    protected String password;
+    protected String role;
+    protected String email;
+    protected String name;
+
+    public User(String name, String password, String email, String role) {
         this.password = password;
         this.email = email;
-        this.Name = Name;
+        this.role = role;
+        this.name = name;
     }
-    public String getUsername() {
-        return username;
-    }
-    public void setUsername(String username) {
-        this.username = username;
-    }
-    public String getPassword() {
-        return password;
-    }
+
+
     public void setPassword(String password) {
         this.password = password;
     }
     public String getEmail() {
         return email;
     }
-    public void setEmail(String email) {
 
+    public String getName() {
+     return name;
     }
 
+    public String getRole(){
+        return role;
+    }
+    public String getPassword() {
+        return password;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
 
 
 }

@@ -1,7 +1,6 @@
 package com.cinema.CineConnect.model.DTO;
 
-import java.time.LocalDate;
-public record RoleRepository(
+public record RoleRecord(
             String name,
             String created_at,
             String description

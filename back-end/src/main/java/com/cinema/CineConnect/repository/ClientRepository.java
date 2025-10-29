@@ -14,7 +14,7 @@ public class ClientRepository {
     }
 
     public List<ClientRecord> findAll() {
-        return jdbcClient.sql("SELECT * FROM client")
+        return jdbcClient.sql("SELECT * FROM users")
                 .query(ClientRecord.class)
                 .list();
     }

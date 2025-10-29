@@ -22,7 +22,7 @@ import java.util.List;
         // GET /api/usuarios
         @GetMapping
         public List<UserRecord> findAll() {
-            return userRepository.findAll();
+            return userRepository.findAllClients();
         }
 //
 //        // GET /api/usuarios/{id}

@@ -1,8 +1,11 @@
 package com.cinema.CineConnect.model.DTO;
 
 public record UserRecord(
-        Integer id,
-        String nome,
-        String email
-) {}
+        String name,
+        String email,
+        String password,
+        Integer role_id,
+        String birth_date
+
+){}
 
