@@ -1,1 +1,0 @@
-import {request} from '../../../components/axios_helper'
