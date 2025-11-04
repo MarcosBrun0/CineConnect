@@ -1,203 +1,123 @@
-//Login and Register buttons
-// Movies list
-import {
-  IconBook,
-  IconChartPie3,
-  IconChevronDown,
-  IconCode,
-  IconCoin,
-  IconFingerprint,
-  IconNotification,
-} from '@tabler/icons-react';
-import {
-  Anchor,
-  Box,
-  Burger,
-  Button,
-  Center,
-  Collapse,
-  Divider,
-  Drawer,
-  Group,
-  HoverCard,
-  ScrollArea,
-  SimpleGrid,
-  Text,
-  ThemeIcon,
-  UnstyledButton,
-  useMantineTheme,
-} from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
-import { MantineLogo } from '@mantinex/mantine-logo';
-import classes from './HeaderMegaMenu.module.css';
+import React, { useState, useEffect } from "react";
+import axios from 'axios'; 
+// A importação do Carousel deve estar correta.
+import { Carousel } from "@material-tailwind/react"; 
 
-const mockdata = [
-  {
-    icon: IconCode,
-    title: 'Open source',
-    description: 'This Pokémon’s cry is very loud and distracting',
-  },
-  {
-    icon: IconCoin,
-    title: 'Free for everyone',
-    description: 'The fluid of Smeargle’s tail secretions changes',
-  },
-  {
-    icon: IconBook,
-    title: 'Documentation',
-    description: 'Yanma is capable of seeing 360 degrees without',
-  },
-  {
-    icon: IconFingerprint,
-    title: 'Security',
-    description: 'The shell’s rounded shape and the grooves on its.',
-  },
-  {
-    icon: IconChartPie3,
-    title: 'Analytics',
-    description: 'This Pokémon uses its flying ability to quickly chase',
-  },
-  {
-    icon: IconNotification,
-    title: 'Notifications',
-    description: 'Combusken battles with the intensely hot flames it spews',
-  },
-];
+// Defina a URL completa da API
+const API_URL = 'http://localhost:8080/api/movie';
 
-export function HeaderMegaMenu() {
-  const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
-  const [linksOpened, { toggle: toggleLinks }] = useDisclosure(false);
-  const theme = useMantineTheme();
+export function Homepage() {
+  const [movies, setMovies] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  // 1. Estado para exibir o JSON bruto na tela (para debug)
+  const [debugJson, setDebugJson] = useState('Aguardando dados...');
 
-  const links = mockdata.map((item) => (
-    <UnstyledButton className={classes.subLink} key={item.title}>
-      <Group wrap="nowrap" align="flex-start">
-        <ThemeIcon size={34} variant="default" radius="md">
-          <item.icon size={22} color={theme.colors.blue[6]} />
-        </ThemeIcon>
-        <div>
-          <Text size="sm" fw={500}>
-            {item.title}
-          </Text>
-          <Text size="xs" c="dimmed">
-            {item.description}
-          </Text>
-        </div>
-      </Group>
-    </UnstyledButton>
-  ));
+  // useEffect para chamar a API
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
 
+        const response = await axios.get(API_URL);
+
+        // 2. Log no console e armazena para exibição na tela
+        setMovies(response.data); 
+        console.log("Dados da API recebidos:", response.data);
+        setDebugJson(JSON.stringify(response.data, null, 2));
+
+      } catch (err) {
+        console.error("Erro ao buscar filmes:", err);
+        setError("Não foi possível carregar o conteúdo. Verifique o servidor e o CORS.");
+        setMovies([]);
+        setDebugJson(`ERRO: ${err.message}`);
+
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMovies();
+  }, []);
+
+  // --- Renderização de Estado ---
+  if (isLoading) {
+    return <div className="p-8 text-center text-lg">Carregando filmes...</div>;
+  }
+
+  if (error) {
+    return <div className="p-8 text-center text-lg text-red-600">Erro: {error}</div>;
+  }
+  
+  if (movies.length === 0) {
+    return (
+      <div className="p-4">
+        <div className="p-8 text-center text-lg text-gray-500">Nenhum filme encontrado.</div>
+        {/* Bloco de Debug para NENHUM FILME */}
+        <h3 className="text-xl font-semibold mt-6 mb-2">JSON Recebido (Debug)</h3>
+        <pre className="bg-gray-100 p-3 rounded overflow-auto text-sm">{debugJson}</pre>
+      </div>
+    );
+  }
+
+  // --- Renderização do Carrossel com os dados ---
   return (
-    <Box pb={120}>
-      <header className={classes.header}>
-        <Group justify="space-between" h="100%">
-          <MantineLogo size={30} />
+    <div className="p-4">
+      <h2 className="text-2xl font-bold mb-4">Em Destaque</h2>
 
-          <Group h="100%" gap={0} visibleFrom="sm">
-            <a href="#" className={classes.link}>
-              Home
-            </a>
-            <HoverCard width={600} position="bottom" radius="md" shadow="md" withinPortal>
-              <HoverCard.Target>
-                <a href="#" className={classes.link}>
-                  <Center inline>
-                    <Box component="span" mr={5}>
-                      Features
-                    </Box>
-                    <IconChevronDown size={16} color={theme.colors.blue[6]} />
-                  </Center>
-                </a>
-              </HoverCard.Target>
+      {/* 3. Bloco de Debug Reintroduzido */}
+      <h3 className="text-xl font-semibold mt-6 mb-2">JSON Recebido (Debug)</h3>
+      <pre className="bg-gray-100 p-3 rounded overflow-auto text-sm">
+        {debugJson}
+      </pre>
 
-              <HoverCard.Dropdown style={{ overflow: 'hidden' }}>
-                <Group justify="space-between" px="md">
-                  <Text fw={500}>Features</Text>
-                  <Anchor href="#" fz="xs">
-                    View all
-                  </Anchor>
-                </Group>
-
-                <Divider my="sm" />
-
-                <SimpleGrid cols={2} spacing={0}>
-                  {links}
-                </SimpleGrid>
-
-                <div className={classes.dropdownFooter}>
-                  <Group justify="space-between">
-                    <div>
-                      <Text fw={500} fz="sm">
-                        Get started
-                      </Text>
-                      <Text size="xs" c="dimmed">
-                        Their food sources have decreased, and their numbers
-                      </Text>
-                    </div>
-                    <Button variant="default">Get started</Button>
-                  </Group>
-                </div>
-              </HoverCard.Dropdown>
-            </HoverCard>
-            <a href="#" className={classes.link}>
-              Learn
-            </a>
-            <a href="#" className={classes.link}>
-              Academy
-            </a>
-          </Group>
-
-          <Group visibleFrom="sm">
-            <Button variant="default">Log in</Button>
-            <Button>Sign up</Button>
-          </Group>
-
-          <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" />
-        </Group>
-      </header>
-
-      <Drawer
-        opened={drawerOpened}
-        onClose={closeDrawer}
-        size="100%"
-        padding="md"
-        title="Navigation"
-        hiddenFrom="sm"
-        zIndex={1000000}
+      <h3 className="text-xl font-bold mt-6 mb-2">Carrossel de Filmes</h3>
+      
+      {/* 4. Carrossel com a navegação personalizada CORRIGIDA */}
+      <Carousel
+        className="rounded-xl h-96"
+        loop={true}
+        // Este bloco de navegação é crucial para o carrossel funcionar corretamente
+        // e exibir os indicadores (bolinhas)
+        navigation={({ setActiveIndex, activeIndex, length }) => (
+          <div className="absolute bottom-4 left-2/4 z-50 flex -translate-x-2/4 gap-2">
+            {new Array(length).fill("").map((_, i) => (
+              <span
+                key={i}
+                className={`block h-3 w-3 cursor-pointer rounded-full transition-colors content-[''] ${
+                  activeIndex === i ? "bg-white" : "bg-white/50"
+                }`}
+                onClick={() => setActiveIndex(i)}
+              />
+            ))}
+          </div>
+        )}
       >
-        <ScrollArea h="calc(100vh - 80px" mx="-md">
-          <Divider my="sm" />
+        {/* MAPEAR OS DADOS NO CARROSSEL */}
+        {movies.map((movie) => (
+          <div key={movie.movieId} className="relative h-full w-full">
+            <img
+              // Usando o caminho 'img' do seu JSON
+              src={"https://images.ctfassets.net/hrltx12pl8hq/4f6DfV5DbqaQUSw0uo0mWi/6fbcf889bdef65c5b92ffee86b13fc44/shutterstock_376532611.jpg?fit=fill&w=600&h=400"} 
+              alt={movie.name}
+              className="h-full w-full object-cover"
+            />
 
-          <a href="#" className={classes.link}>
-            Home
-          </a>
-          <UnstyledButton className={classes.link} onClick={toggleLinks}>
-            <Center inline>
-              <Box component="span" mr={5}>
-                Features
-              </Box>
-              <IconChevronDown size={16} color={theme.colors.blue[6]} />
-            </Center>
-          </UnstyledButton>
-          <Collapse in={linksOpened}>{links}</Collapse>
-          <a href="#" className={classes.link}>
-            Learn
-          </a>
-          <a href="#" className={classes.link}>
-            Academy
-          </a>
-
-          <Divider my="sm" />
-
-          <Group justify="center" grow pb="xl" px="md">
-            <Button variant="default">Log in</Button>
-            <Button>Sign up</Button>
-          </Group>
-        </ScrollArea>
-      </Drawer>
-    </Box>
+            {/* Overlay com Informações do Filme */}
+            <div className="absolute inset-0 grid h-full w-full items-end bg-black/50 p-6">
+              <div className="text-white">
+                <h4 className="text-3xl font-bold mb-1">{movie.name}</h4>
+                <p className="text-xl">Nota: {movie.rating} / 10</p>
+                <p className="text-md">Duração: {movie.duration} min</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </Carousel>
+    </div>
   );
 }
 
-
-
-
+export default Homepage;

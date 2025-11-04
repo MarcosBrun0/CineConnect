@@ -1,4 +1,4 @@
-import { Anchor, PasswordInput, Text, TextInput, Stack, Button, Card} from '@mantine/core';
+import { Anchor, PasswordInput, Text, TextInput, Flex, Button, Card} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import {PasswordStrengthForm} from '../../components/PasswordStrengthForm'
 import {DateInput, DatePickerInput} from "@mantine/dates";
@@ -10,8 +10,7 @@ import api from "../../api";
 import {redirect} from "react-router-dom";
 
 
-
-function UserRegister() {
+function Register() {
 
 
     const handleSubmit = async (values) => {
@@ -32,20 +31,13 @@ function UserRegister() {
     const form = useForm(
         {
             mode: 'uncontrolled',
-            initialValues: { email: '', password: '', name:'',birthDate:null},
+            initialValues: { email: '', password: '', name},
             validate:{
-                email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
-                birthDate: (value) => {
-                    if (!value) return "Please select your birth date";
-                    const age = dayjs().diff(dayjs(value), "year");
-                    return age < 18 ? "You must be at least 18 years old" : null;
-                },
-                name: (value) =>{
-                    if (!(/^[a-zA-Z\s]+$/.test(value))) return "invalid Name"
-    }
+                email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email')
             },
 
         });
+
     return (
         <div>
             <Card
@@ -53,6 +45,11 @@ function UserRegister() {
                 withBorder
                 radius="md"
             >
+                <Flex
+                    justify="space-between"
+                    direction='column'
+                    p="sm"
+                >
 
                 <div>
                     <form onSubmit={form.onSubmit(handleSubmit)}>
@@ -96,26 +93,44 @@ function UserRegister() {
                     </form>
                 </div>
 
-                <Card.Section
-                    withBorder
-                    inheritPadding
-                    mt="sm"
-                    p="sm">
+                        </Text>
+
+                        <PasswordInput placeholder="Your password"
+                                       id="your-password"
+                                       key={form.key('password')}
+                                       {...form.getInputProps('password')}                                   pb="xs"
+                        />
 
 
-                    <Anchor href="/user/login"
-                            ml="lg"
-                            pt={2}
-                            fw={500}
-                            fz="xs"
-                            //onClick={(event) => event.preventDefault()}
-                    >
-                        Already have an account?
-                    </Anchor>
-                </Card.Section>
+                        <Button
+                            type="submit"
+                            radius="md"
+                            mt="md"
+                        >Login</Button>
+
+                    </form>
+                    <Card.Section
+                        withBorder
+                        inheritPadding
+                        mt="sm"
+                        p="sm">
+
+                        <Anchor
+                            href="#" onClick={(event) => event.preventDefault()} pt={2} fw={500} fz="xs">
+                            Register
+                        </Anchor>
+
+                        <Anchor href="#"
+                                ml="lg"
+                                onClick={(event) => event.preventDefault()} pt={2} fw={500} fz="xs"
+                        >
+
+                            Forgot your password?
+                        </Anchor>
+                    </Card.Section>
 
 
-
+                </Flex>
             </Card>
 
         </div>
@@ -123,4 +138,4 @@ function UserRegister() {
     );
 }
 
-export default UserRegister
+export default Register

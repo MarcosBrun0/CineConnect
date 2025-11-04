@@ -41,12 +41,10 @@ function UserLogin() {
             <div>
             <form onSubmit={form.onSubmit(handleSubmit)}>
             <Stack gap="sm">
-
             <TextInput
                 label="Your email"
                 name="email"
                 placeholder="youremail@example.com"
-                required
                 {...form.getInputProps('email')}
                 id="your-email"
                 />
@@ -57,7 +55,6 @@ function UserLogin() {
                                     name="password"
                                    label="Your password"
                                    id="your-password"
-                                   required
                                    {...form.getInputProps('password')}                                   pb="xs"
                     />
 
@@ -80,11 +77,7 @@ function UserLogin() {
                     p="sm">
 
                     <Anchor
-                        href="/user/register"
-                        //onClick={(event) => event.preventDefault()}
-                        pt={2}
-                        fw={500}
-                        fz="xs">
+                        href="#" onClick={(event) => event.preventDefault()} pt={2} fw={500} fz="xs">
                         Register
                     </Anchor>
 
