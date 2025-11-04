@@ -1,6 +1,6 @@
-package com.cinema.CineConnect.model;
+package com.cinema.CineConnect.model.DTO;
 
-public record Seat(
+public record SeatRecord(
         Integer seat_id,
         Integer row,
         Integer number,

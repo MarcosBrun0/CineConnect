@@ -1,0 +1,41 @@
+package com.cinema.CineConnect.service;
+
+import com.cinema.CineConnect.model.DTO.RegistrationRequestRecord;
+import com.cinema.CineConnect.model.DTO.UserRecordRoleId;
+import com.cinema.CineConnect.repository.AuthRepository;
+import com.cinema.CineConnect.repository.RoleRepository;
+import com.cinema.CineConnect.repository.UserRepository;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class RegistrationService {
+
+    private final AuthRepository authRepository;
+    private final RoleRepository roleRepository;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    public RegistrationService(AuthRepository authRepository, RoleRepository roleRepository, UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.authRepository = authRepository;
+        this.roleRepository = roleRepository;
+        this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
+
+    public void createAndSaveUser(RegistrationRequestRecord registrationRequestRecord) {
+        var role = roleRepository.findRoleID("Client");
+        if(role.isEmpty()){
+            throw new RuntimeException("Error finding role");
+        }
+        UserRecordRoleId user = new UserRecordRoleId(registrationRequestRecord.name(),
+                registrationRequestRecord.email(), bCryptPasswordEncoder.encode(registrationRequestRecord.password()),
+                role.get(),
+                registrationRequestRecord.birthDate());
+
+
+        System.out.println(registrationRequestRecord.birthDate());
+        System.out.println(user);
+        userRepository.saveUser(user);
+    }
+}

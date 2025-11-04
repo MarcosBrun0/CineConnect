@@ -1,6 +1,6 @@
 package com.cinema.CineConnect.controller;
 
-import com.cinema.CineConnect.model.Movie;
+import com.cinema.CineConnect.model.DTO.MovieRecord;
 import com.cinema.CineConnect.repository.MovieRepository;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,13 +19,13 @@ public class MovieController {
     }
 
         @GetMapping
-        public List<Movie> findAll() {
+        public List<MovieRecord> findAll() {
             return movieRepository.findAll();
         }
 
 
         @GetMapping("/{name}")
-        public Optional<Movie> findByName(@PathVariable String name) {
+        public Optional<MovieRecord> findByName(@PathVariable String name) {
             return movieRepository.findByName(name);
 
         }

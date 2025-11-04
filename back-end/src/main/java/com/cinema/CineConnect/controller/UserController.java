@@ -1,9 +1,9 @@
 package com.cinema.CineConnect.controller;
 
-import com.cinema.CineConnect.model.Usuario;
+import com.cinema.CineConnect.model.DTO.UserRecordRoleId;
+import com.cinema.CineConnect.model.DTO.UserRecordRoleName;
 import com.cinema.CineConnect.repository.UserRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
 
 
     @RestController
-    @RequestMapping("/api/usuarios")
+    @RequestMapping
     public class UserController {
 
         private final UserRepository userRepository;
@@ -22,14 +22,15 @@ import java.util.List;
         }
 
         // GET /api/usuarios
-        @GetMapping
-        public List<Usuario> findAll() {
-            return userRepository.findAll();
+        @PreAuthorize("hasAuthority('SCOPE_client')")
+        @GetMapping("/api/usuarios")
+        public List<UserRecordRoleName> findAll() {
+            return userRepository.findAllUsersRoleName();
         }
 //
 //        // GET /api/usuarios/{id}
 //        @GetMapping("/{id}")
-//        public ResponseEntity<Usuario> findById(@PathVariable Integer id) {
+//        public ResponseEntity<UserRecordRoleId> findById(@PathVariable Integer id) {
 //            return userRepository.findById(id)
 //                    .map(ResponseEntity::ok)
 //                    .orElse(ResponseEntity.notFound().build());

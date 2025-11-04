@@ -1,11 +1,12 @@
 package com.cinema.CineConnect.repository;
 
-import com.cinema.CineConnect.model.Client;
-import com.cinema.CineConnect.model.Employee;
+import com.cinema.CineConnect.model.DTO.*;
+import com.cinema.CineConnect.model.User;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+
 
 @Repository
 public class AuthRepository {
@@ -13,17 +14,19 @@ public class AuthRepository {
     public AuthRepository(JdbcClient jdbcClient) {
         this.jdbcClient = jdbcClient;
     }
-    //tenta encontrar email na tabela de client
-    public Optional<Client> findClientByEmail(String email) {
-        return jdbcClient.sql("SELECT  * FROM client WHERE email = :email")
+    //Tries to find account indo from the users folder
+    public Optional<LoginRequestRecord> findByEmail(String email) {
+        return jdbcClient.sql("SELECT email,password FROM users WHERE email = :email")
                 .param("email", email)
-                .query(Client.class).optional();
+                .query(LoginRequestRecord.class)
+                .optional();
+        // Returns optional.empty() if no user was found
+    }
 
-    }
-    //tenta encontrar email na tabela de employee
-    public Optional<Employee> findEmployeeByEmail(String email) {
-        return jdbcClient.sql("SELECT * FROM client WHERE email = :email").param("email",email)
-                .query(Employee.class).optional();
-    }
+
+        // Returns optional.empty() if no user was found
+
+
+
 
 }

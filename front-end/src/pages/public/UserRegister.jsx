@@ -1,8 +1,32 @@
 import { Anchor, PasswordInput, Text, TextInput, Flex, Button, Card} from '@mantine/core';
 import { useForm } from '@mantine/form';
+import {PasswordStrengthForm} from '../../components/PasswordStrengthForm'
+import {DateInput, DatePickerInput} from "@mantine/dates";
+import '@mantine/dates/styles.css'
+import '@mantine/core/styles.css';
+import { IconCalendar } from '@tabler/icons-react';
+import dayjs from 'dayjs';
+import api from "../../api";
+import {redirect} from "react-router-dom";
 
 
 function Register() {
+
+
+    const handleSubmit = async (values) => {
+        try {
+            const response = await api.post("/api/register", {
+                email: values.email,
+                password: values.password,
+                name: values.name,
+                birthDate: values.birthDate
+
+            });
+            console.warn("User Registered")
+        } catch (err) {
+            console.log(err);
+        }
+    };
 
     const form = useForm(
         {
@@ -27,22 +51,47 @@ function Register() {
                     p="sm"
                 >
 
-                    <form onSubmit={form.onSubmit((values) => console.log(values))}>
-                        <Text component="label" htmlFor="your-email" size="sm" pb="xs" fw={500}>
-                            Your Email
-                        </Text>
+                <div>
+                    <form onSubmit={form.onSubmit(handleSubmit)}>
+                        <Stack gap="sm">
+                            <TextInput
+                                label="Your Name"
+                                placeholder="John Doe"
+                                {...form.getInputProps('name')}
+                                id="register-name"
+                            />
+                            <DatePickerInput
+                                leftSection={<IconCalendar size={18} stroke={1.5} />}
+                                clearable
+                                label="Your Birthdate"
+                                placeholder="00/00/0000"
+                                {...form.getInputProps("birthDate")}
+/>
+                            <TextInput
+                                label="Your email"
+                                placeholder="youremail@example.com"
+                                {...form.getInputProps('email')}
+                                id="register-email"
+                            />
 
-                        <TextInput
-                            placeholder="youremail@example.com"
-                            key={form.key('email')}
-                            {...form.getInputProps('email')}
-                            id="your-email"
-                            pb="xs">
 
-                        </TextInput>
+                            <PasswordStrengthForm
+                            Label="Your Password"
+                            {...form.getInputProps('password')}
+                            required
+                                >
+                            </PasswordStrengthForm>
 
-                        <Text component="label" htmlFor="your-password" size="sm" pb="xs" fw={500}>
-                            Your password
+                            <Button
+                                type="submit"
+                                radius="md"
+
+                            >Register</Button>
+
+
+                        </Stack>
+                    </form>
+                </div>
 
                         </Text>
 

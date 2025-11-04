@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-do
 import {Form} from "@mantine/form";
 import UserLogin from "./pages/public/UserLogin"
 import Layout from './components/layout';
+import UserDashboard from "./pages/private/user/UserDashboard";
+
 import Homepage from './pages/public/Homepage';
 
 function App() {
@@ -13,8 +15,9 @@ function App() {
           <Routes>
 
               <Route path="/user/login" element={<Layout><UserLogin/></Layout>}></Route>
+              <Route path="/user/register" element={<UserRegister/>}></Route>
+              <Route path="/user/dashboard" element={<UserDashboard/>}></Route>
               
-              <Route path="/user/register">    </Route>
 
               <Route path="/" element={<Layout><Homepage/></Layout>}></Route>
 

@@ -1,17 +1,16 @@
 package com.cinema.CineConnect.repository;
 
-import com.cinema.CineConnect.model.Usuario;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.context.annotation.Bean;
+import com.cinema.CineConnect.model.DTO.UserRecordRoleName;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
+import com.cinema.CineConnect.model.DTO.UserRecordRoleId;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public class UserRepository {
-
     private final JdbcClient jdbcClient;
 
     public UserRepository(JdbcClient jdbcClient) {
@@ -19,35 +18,51 @@ public class UserRepository {
     }
 
 
-    public List<Usuario> findAll() {
-        return jdbcClient.sql("SELECT id, nome, email FROM usuario")
-                .query(Usuario.class)
+    public List<UserRecordRoleId> findAllClients() {
+        return jdbcClient.sql("SELECT name, email FROM users WHERE role_id = 5")
+                .query(UserRecordRoleId.class)
                 .list();
     }
 
 
-    public void save(UserRecord user) {
-        jdbcClient.sql("""
-        INSERT INTO usuario(nome, email)
-        VALUES (:nome,:email)
+    public Optional<UserRecordRoleName> findByEmailRoleName(String email) {
+        return jdbcClient.sql("""
+            SELECT users.id,users.name,email,password,birth_date,roles.name as roleName
+            FROM users 
+            INNER JOIN roles 
+            ON users.role_id = roles.id 
+            WHERE email = :email
 """)
-                .param("nome", user.nome())
+                .param("email", email)
+                .query(UserRecordRoleName.class)
+                .optional();
+    }
+        public void saveUser(UserRecordRoleId user) {
+            jdbcClient.sql("""
+        INSERT INTO users (name, role_id, email, password, birth_date)
+            VALUES (:name,:role_id,:email,:password,:birth_date)
+    """)
+                .param("name", user.name())
                 .param("email", user.email())
+                .param("password",user.password())
+                .param("role_id",user.role())
+                .param("birth_date", LocalDate.parse(user.birth_date()))
                 .update();
     }
 
-    public record UserRecord(String nome, String email) {
-
+    public List<UserRecordRoleName> findAllUsersRoleName() {
+        return jdbcClient.sql("""
+         
+            SELECT users.id,users.name,email,password,birth_date,roles.name as roleName
+            FROM users INNER JOIN roles 
+            ON users.role_id = roles.id 
+            """)
+                .query(UserRecordRoleName.class)
+                .list();
     }
 
-    public Optional<Usuario> findByEmail(String email) {
-        String sql = "SELECT id, nome, email FROM usuario WHERE email = :email";
-        // .optional() retorna um Optional.empty() se nenhum resultado for encontrado
-        return jdbcClient.sql(sql)
-                .param("email", email)
-                .query(Usuario.class)
-                .optional();
-    }
+
+
 
 
 }
