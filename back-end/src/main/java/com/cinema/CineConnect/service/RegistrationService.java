@@ -1,7 +1,7 @@
 package com.cinema.CineConnect.service;
 
 import com.cinema.CineConnect.model.DTO.RegistrationRequestRecord;
-import com.cinema.CineConnect.model.DTO.UserRecord;
+import com.cinema.CineConnect.model.DTO.UserRecordRoleId;
 import com.cinema.CineConnect.repository.AuthRepository;
 import com.cinema.CineConnect.repository.RoleRepository;
 import com.cinema.CineConnect.repository.UserRepository;
@@ -25,11 +25,17 @@ public class RegistrationService {
 
     public void createAndSaveUser(RegistrationRequestRecord registrationRequestRecord) {
         var role = roleRepository.findRoleID("Client");
-        UserRecord user = new UserRecord(registrationRequestRecord.name(),
+        if(role.isEmpty()){
+            throw new RuntimeException("Error finding role");
+        }
+        UserRecordRoleId user = new UserRecordRoleId(registrationRequestRecord.name(),
                 registrationRequestRecord.email(), bCryptPasswordEncoder.encode(registrationRequestRecord.password()),
                 role.get(),
                 registrationRequestRecord.birthDate());
 
+
+        System.out.println(registrationRequestRecord.birthDate());
+        System.out.println(user);
         userRepository.saveUser(user);
     }
 }

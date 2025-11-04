@@ -21,12 +21,16 @@ public class PasswordVerificationService {
 
     public boolean verify(LoginRequestRecord loginRequestRecord) {
         var dbUser = authRepository.findByEmail(loginRequestRecord.email());
+
         if(dbUser.isEmpty()){
             return false;
         }
+
         var password = dbUser.get().password();
+
         //returns true if the decrypted password what is stored in the database
         return bCryptPasswordEncoder.matches(loginRequestRecord.password(), password);
+
 
     }
 

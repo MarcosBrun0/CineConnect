@@ -1,9 +1,6 @@
 package com.cinema.CineConnect.repository;
 
-import com.cinema.CineConnect.model.DTO.ClientRecord;
-import com.cinema.CineConnect.model.DTO.EmployeeRecord;
-import com.cinema.CineConnect.model.DTO.LoginRequestRecord;
-import com.cinema.CineConnect.model.DTO.UserRecord;
+import com.cinema.CineConnect.model.DTO.*;
 import com.cinema.CineConnect.model.User;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
@@ -25,4 +22,11 @@ public class AuthRepository {
                 .optional();
         // Returns optional.empty() if no user was found
     }
+
+
+        // Returns optional.empty() if no user was found
+
+
+
+
 }

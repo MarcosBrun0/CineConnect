@@ -5,6 +5,8 @@ import com.cinema.CineConnect.repository.AuthRepository;
 import com.cinema.CineConnect.repository.UserRepository;
 import com.cinema.CineConnect.service.JwtTokenService;
 import com.cinema.CineConnect.service.PasswordVerificationService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -32,19 +34,27 @@ public class TokenController {
     }
 
     @PostMapping("/api/login")
-    public ResponseEntity<LoginResponseRecord> login(@RequestBody LoginRequestRecord loginRequestRecord) {
-
+    public ResponseEntity<String> login(@RequestBody LoginRequestRecord loginRequestRecord) {
         // var user = optional<user>
 
-        //user.get gets the value from the optional<user>
         if(!passwordVerificationService.verify(loginRequestRecord)){
             throw new BadCredentialsException("Invalid email or password");
         }
-
         var expiresIn = 360L;
         var jwtValue= jwtTokenService.generate(loginRequestRecord,expiresIn);
 
-        return ResponseEntity.ok(new LoginResponseRecord(jwtValue,expiresIn));
+        ResponseCookie cookie = ResponseCookie.from("token",jwtValue)
+                .httpOnly(true)
+                .secure(false)  //not using https in dev environment
+                .path("/")
+                .maxAge(expiresIn)
+                .sameSite("Strict")
+                .build();
+
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE,cookie.toString())
+                .body(" your login was successful :) ");
 
     }
 

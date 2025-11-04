@@ -1,8 +1,25 @@
-import { Anchor, PasswordInput, Text, TextInput, Stack, Button, Card} from '@mantine/core';
+import {Anchor, PasswordInput, Text, TextInput, Stack, Button, Card, createVarsResolver} from '@mantine/core';
 import { useForm } from '@mantine/form';
+import api from "../../api";
 
 
 function UserLogin() {
+
+    const handleSubmit = async (values) => {
+        try {
+
+            const response = await api.post("/api/login", {
+                email: values.email,
+                password: values.password,
+            },
+                {headers: {
+                        "Content-Type": "application/json"
+                    }})
+        } catch (err) {
+            console.log(err);
+        }
+    };
+
 
     const form = useForm(
         {
@@ -22,11 +39,12 @@ function UserLogin() {
             >
 
             <div>
-            <form onSubmit={form.onSubmit((values) => console.log(values))}>
+            <form onSubmit={form.onSubmit(handleSubmit)}>
             <Stack gap="sm">
 
             <TextInput
                 label="Your email"
+                name="email"
                 placeholder="youremail@example.com"
                 required
                 {...form.getInputProps('email')}
@@ -36,6 +54,7 @@ function UserLogin() {
 
 
             <PasswordInput placeholder="Your password"
+                                    name="password"
                                    label="Your password"
                                    id="your-password"
                                    required

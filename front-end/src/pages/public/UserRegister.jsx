@@ -6,10 +6,28 @@ import '@mantine/dates/styles.css'
 import '@mantine/core/styles.css';
 import { IconCalendar } from '@tabler/icons-react';
 import dayjs from 'dayjs';
+import api from "../../api";
+import {redirect} from "react-router-dom";
 
 
 
 function UserRegister() {
+
+
+    const handleSubmit = async (values) => {
+        try {
+            const response = await api.post("/api/register", {
+                email: values.email,
+                password: values.password,
+                name: values.name,
+                birthDate: values.birthDate
+
+            });
+            console.warn("User Registered")
+        } catch (err) {
+            console.log(err);
+        }
+    };
 
     const form = useForm(
         {
@@ -37,7 +55,7 @@ function UserRegister() {
             >
 
                 <div>
-                    <form onSubmit={form.onSubmit((values) => console.log(values))}>
+                    <form onSubmit={form.onSubmit(handleSubmit)}>
                         <Stack gap="sm">
                             <TextInput
                                 label="Your Name"

@@ -1,7 +1,7 @@
 package com.cinema.CineConnect.controller;
 
 import com.cinema.CineConnect.model.DTO.RegistrationRequestRecord;
-import com.cinema.CineConnect.model.DTO.UserRecord;
+import com.cinema.CineConnect.model.DTO.UserRecordRoleId;
 import com.cinema.CineConnect.repository.RoleRepository;
 import com.cinema.CineConnect.repository.AuthRepository;
 import com.cinema.CineConnect.repository.UserRepository;
@@ -31,7 +31,7 @@ public class UserRegistrationController {
 
     @Transactional
     @PostMapping("/api/register")   //Registro de Clientes
-    public ResponseEntity<UserRecord> newUser(@RequestBody RegistrationRequestRecord registrationRequestRecord) {
+    public ResponseEntity<UserRecordRoleId> newUser(@RequestBody RegistrationRequestRecord registrationRequestRecord) {
 
         authRepository.findByEmail(registrationRequestRecord.email());
         if(authRepository.findByEmail(registrationRequestRecord.email()).isPresent()){

@@ -1,6 +1,8 @@
 package com.cinema.CineConnect.model.DTO;
 
-public record UserRecord(
+import java.util.UUID;
+
+public record UserRecordRoleId(
         String name,
         String email,
         String password,
