@@ -1,4 +1,4 @@
-import {Anchor, PasswordInput, Text, TextInput, Stack, Button, Card, createVarsResolver} from '@mantine/core';
+import {Anchor, PasswordInput, TextInput, Stack, Button, Card, createVarsResolver} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import api from "../../api";
 
@@ -12,9 +12,7 @@ function UserLogin() {
                 email: values.email,
                 password: values.password,
             },
-                {headers: {
-                        "Content-Type": "application/json"
-                    }})
+                )
         } catch (err) {
             console.log(err);
         }
