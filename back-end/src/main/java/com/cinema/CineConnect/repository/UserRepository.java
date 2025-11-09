@@ -9,6 +9,7 @@ import com.cinema.CineConnect.model.DTO.UserRecordRoleId;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public class UserRepository {
@@ -61,6 +62,20 @@ public class UserRepository {
                 .query(UserRecordRoleName.class)
                 .list();
     }
+
+
+    public Optional<UserRecordRoleName> findInfoById(UUID uuid) {
+        return jdbcClient.sql("""
+            SELECT users.id,users.name,email,password,birth_date,roles.name as roleName
+            FROM users INNER JOIN roles 
+            ON users.role_id = roles.id 
+            WHERE users.id = :uuid
+""")
+                .param("uuid", uuid)
+                .query(UserRecordRoleName.class)
+                .optional();
+    }
+
 
 
 
