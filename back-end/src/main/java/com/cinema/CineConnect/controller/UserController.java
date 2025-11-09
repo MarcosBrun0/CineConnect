@@ -22,11 +22,21 @@ import java.util.List;
         }
 
         // GET /api/usuarios
-        @PreAuthorize("hasAuthority('SCOPE_client')")
+        @PreAuthorize("hasAuthority('SCOPE_Admin')")
         @GetMapping("/api/usuarios")
         public List<UserRecordRoleName> findAll() {
             return userRepository.findAllUsersRoleName();
         }
+//
+//        @PreAuthorize("hasAnyAuthority()")
+//        @GetMapping("/api/me")
+//        public UserRecordRoleName findMe() {
+//
+//        }
+    }
+        //@GetMapping("/api/user/profile")
+
+
 //
 //        // GET /api/usuarios/{id}
 //        @GetMapping("/{id}")
@@ -37,4 +47,5 @@ import java.util.List;
 //        }
 
 
-    }
+
+
