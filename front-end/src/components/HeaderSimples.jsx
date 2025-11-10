@@ -1,6 +1,18 @@
 import { ActionIcon, Container, Group, Button } from '@mantine/core';
 
+import {useNavigate} from "react-router-dom";
+
 export function HeaderSimples() {
+    const nav = useNavigate();
+
+    const gotoLogin=()=>{
+        nav("/login");
+    }
+
+    const gotoRegister=()=>{
+        nav("/register");
+    }
+
   return (
     <div className="border-b border-gray-200 py-1 bg-gray-50">
       <Container className="flex items-center justify-between">
@@ -30,9 +42,9 @@ export function HeaderSimples() {
 
         {/* Botões de Ação */}
         <Group gap={0} justify="flex-end" wrap="nowrap">
-          <Button variant="outline" size="xs">Register</Button>
+          <Button variant="outline" size="xs" onClick={gotoRegister}>Register</Button>
           <div className="pl-1"></div>
-          <Button variant="filled" size="xs">Login</Button>
+          <Button variant="filled" size="xs" onClick={gotoLogin}>Login</Button>
         </Group>
 
       </Container>

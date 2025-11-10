@@ -1,6 +1,6 @@
 import {IconCheck, IconX} from '@tabler/icons-react';
 import {Box, Center, Group, PasswordInput, Progress, Text} from '@mantine/core';
-import {useInputState} from '@mantine/hooks';
+import {useState, useEffect} from 'react';
 
 function PasswordRequirement({ meets, label }) {
     return (
@@ -32,31 +32,35 @@ function getStrength(password) {
     return Math.max(100 - (100 / (requirements.length + 1)) * multiplier, 0);
 }
 
-export function PasswordStrengthForm() {
-    const [value, setValue] = useInputState('');
+export default function PasswordStrengthForm({ value: parentValue, onChange }) {
+    const [value, setValue] = useState(parentValue || '');
+
+    // Update parent form whenever internal value changes
+    useEffect(() => {
+        onChange({ currentTarget: { value } });
+    }, [value, onChange]);
+
     const strength = getStrength(value);
-    const checks = requirements.map((requirement, index) => (
-        <PasswordRequirement key={index} label={requirement.label} meets={requirement.re.test(value)} />
+    const checks = requirements.map((req, i) => (
+        <PasswordRequirement key={i} label={req.label} meets={req.re.test(value)} />
     ));
-    const bars = Array(4)
-        .fill(0)
-        .map((_, index) => (
-            <Progress
-                styles={{ section: { transitionDuration: '0ms' } }}
-                value={
-                    value.length > 0 && index === 0 ? 100 : strength >= ((index + 1) / 4) * 100 ? 100 : 0
-                }
-                color={strength > 80 ? 'teal' : strength > 50 ? 'yellow' : 'red'}
-                key={index}
-                size={4}
-            />
-        ));
+    const bars = Array(4).fill(0).map((_, index) => (
+        <Progress
+            styles={{ section: { transitionDuration: '0ms' } }}
+            value={
+                value.length > 0 && index === 0 ? 100 : strength >= ((index + 1) / 4) * 100 ? 100 : 0
+            }
+            color={strength > 80 ? 'teal' : strength > 50 ? 'yellow' : 'red'}
+            key={index}
+            size={4}
+        />
+    ));
 
     return (
         <div>
             <PasswordInput
                 value={value}
-                onChange={setValue}
+                onChange={(e) => setValue(e.currentTarget.value)}
                 placeholder="Your password"
                 label="Password"
                 required
@@ -71,5 +75,3 @@ export function PasswordStrengthForm() {
         </div>
     );
 }
-
-export default PasswordStrengthForm

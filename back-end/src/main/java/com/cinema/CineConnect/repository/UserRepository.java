@@ -1,6 +1,7 @@
 package com.cinema.CineConnect.repository;
 
 import com.cinema.CineConnect.model.DTO.UserRecordRoleName;
+import com.cinema.CineConnect.model.User;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.stereotype.Repository;
 import com.cinema.CineConnect.model.DTO.UserRecordRoleId;
@@ -8,6 +9,7 @@ import com.cinema.CineConnect.model.DTO.UserRecordRoleId;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public class UserRepository {
@@ -37,16 +39,16 @@ public class UserRepository {
                 .query(UserRecordRoleName.class)
                 .optional();
     }
-        public void saveUser(UserRecordRoleId user) {
+        public void saveUser(User user, Integer roleId) {
             jdbcClient.sql("""
         INSERT INTO users (name, role_id, email, password, birth_date)
             VALUES (:name,:role_id,:email,:password,:birth_date)
     """)
-                .param("name", user.name())
-                .param("email", user.email())
-                .param("password",user.password())
-                .param("role_id",user.role())
-                .param("birth_date", LocalDate.parse(user.birth_date()))
+                .param("name", user.getName())
+                .param("email", user.getEmail())
+                .param("password",user.getPassword())
+                .param("role_id",roleId)
+                .param("birth_date", user.getBirth_date())
                 .update();
     }
 
@@ -60,6 +62,20 @@ public class UserRepository {
                 .query(UserRecordRoleName.class)
                 .list();
     }
+
+
+    public Optional<UserRecordRoleName> findInfoById(UUID uuid) {
+        return jdbcClient.sql("""
+            SELECT users.id,users.name,email,password,birth_date,roles.name as roleName
+            FROM users INNER JOIN roles 
+            ON users.role_id = roles.id 
+            WHERE users.id = :uuid
+""")
+                .param("uuid", uuid)
+                .query(UserRecordRoleName.class)
+                .optional();
+    }
+
 
 
 

@@ -3,7 +3,7 @@ package com.cinema.CineConnect.model.DTO;
 import java.util.UUID;
 
 public record UserRecordRoleName(
-        UUID id,
+        String id,
         String name,
         String email,
         String password,

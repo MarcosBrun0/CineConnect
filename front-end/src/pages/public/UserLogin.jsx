@@ -1,9 +1,16 @@
 import {Anchor, PasswordInput, TextInput, Stack, Button, Card, createVarsResolver} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import api from "../../api";
+import {useNavigate} from "react-router-dom";
 
 
 function UserLogin() {
+
+    const nav = useNavigate();
+
+    const goToUserDashBoard = ()=>{
+        nav("/user/dashboard");
+    }
 
     const handleSubmit = async (values) => {
         try {
@@ -12,7 +19,10 @@ function UserLogin() {
                 email: values.email,
                 password: values.password,
             },
-                )
+            )
+
+            goToUserDashBoard();
+
         } catch (err) {
             console.log(err);
         }

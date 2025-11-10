@@ -1,5 +1,6 @@
 package com.cinema.CineConnect.controller;
 
+import com.cinema.CineConnect.model.DTO.AdminRegistrationRequestRecord;
 import com.cinema.CineConnect.model.DTO.RegistrationRequestRecord;
 import com.cinema.CineConnect.model.DTO.UserRecordRoleId;
 import com.cinema.CineConnect.repository.RoleRepository;
@@ -8,6 +9,7 @@ import com.cinema.CineConnect.repository.UserRepository;
 import com.cinema.CineConnect.service.RegistrationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,19 +34,16 @@ public class UserRegistrationController {
     @Transactional
     @PostMapping("/api/register")   //Registro de Clientes
     public ResponseEntity<UserRecordRoleId> newUser(@RequestBody RegistrationRequestRecord registrationRequestRecord) {
+        registrationService.createClient(registrationRequestRecord);
+        return ResponseEntity.ok().build();
 
-        authRepository.findByEmail(registrationRequestRecord.email());
-        if(authRepository.findByEmail(registrationRequestRecord.email()).isPresent()){
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"An user with this email already exists");
-        }
+    }
 
-        if(!roleRepository.findRoleID("Client").isPresent()){
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"Invalid role");
-        }
-
-        registrationService.createAndSaveUser(registrationRequestRecord);
-
-
+    @Transactional
+    @PreAuthorize("hasAnyAuthority('SCOPE_Admin')")
+    @PostMapping("/api/admin/register")   //Registro de Clientes
+    public ResponseEntity<UserRecordRoleId> newUser(@RequestBody AdminRegistrationRequestRecord adminRegistrationRequestRecord) {
+        registrationService.adminCreateAndSaveUser(adminRegistrationRequestRecord);
         return ResponseEntity.ok().build();
     }
 

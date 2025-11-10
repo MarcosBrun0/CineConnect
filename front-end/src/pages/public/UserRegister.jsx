@@ -1,11 +1,11 @@
 import { Anchor, TextInput, Flex, Button, Card, Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { PasswordStrengthForm } from '../../components/PasswordStrengthForm';
 import { DatePickerInput } from "@mantine/dates";
 import '@mantine/dates/styles.css';
 import '@mantine/core/styles.css';
 import { IconCalendar } from '@tabler/icons-react';
 import api from "../../api";
+import PasswordStrengthForm from "../../components/PasswordStrengthForm";
 
 function UserRegister() {
     const form = useForm({
@@ -14,7 +14,7 @@ function UserRegister() {
             email: '',
             password: '',
             name: '',
-            birthDate: '',
+            birth_date: '',
         },
         validate: {
             email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
@@ -45,7 +45,7 @@ function UserRegister() {
                             clearable
                             label="Your Birthdate"
                             placeholder="00/00/0000"
-                            {...form.getInputProps('birthDate')}
+                            {...form.getInputProps('birth_date')}
                         />
                         <TextInput
                             label="Your email"
@@ -53,10 +53,12 @@ function UserRegister() {
                             {...form.getInputProps('email')}
                         />
                         <PasswordStrengthForm
-                            label="Your Password"
-                            {...form.getInputProps('password')}
+                            value={form.values.password}
+                            onChange={(event) => form.setFieldValue('password', event.currentTarget.value)}
                             required
                         />
+
+
                         <Button type="submit" radius="md">Register</Button>
                     </Stack>
                 </form>

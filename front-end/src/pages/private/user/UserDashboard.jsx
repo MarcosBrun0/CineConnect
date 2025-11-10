@@ -1,43 +1,40 @@
-import { Card } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import api from "../../../api";
+import AdminDashboard from "../Admin/AdminDashboard";
+import ClientDashboard from "../Client/ClientDashBoard";
 
 function UserDashboard() {
-    const [users, setUsers] = useState(null);
+    const [role, setRole] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchUsers = async () => {
+        const fetchUserRole = async () => {
             try {
-                const response = await api.get("/api/usuarios", {
-                    withCredentials: true, // ensures cookies are sent
-                });
-                setUsers(response.data);
-            } catch (error) {
-                console.error("Error fetching users:", error);
+                const response = await api.get("/api/me");
+                setRole(response.data.roleName);
+            } catch (err) {
+                console.error("Error fetching user role:", err);
+            } finally {
+                setLoading(false);
             }
         };
 
-        fetchUsers();
+        fetchUserRole();
     }, []);
 
-    return (
-        <div>
-            <Card shadow="lg" withBorder radius="md">
-                <h1>User List</h1>
-                {users ? (
-                    <ul>
-                        {users.map((user) => (
-                            <li key={user.id}>
-                                {user.name} - {user.email}
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>Loading...</p>
-                )}
-            </Card>
-        </div>
-    );
+    if (loading) return <p>Loading...</p>;
+
+    switch (role) {
+        case "Admin":
+            return <AdminDashboard />;
+        case "Client":
+        case "Cashier":
+        case "Employee":
+        case "Manager":
+            return <ClientDashboard />;
+        default:
+            return <p>Invalid Role, please try again.</p>;
+    }
 }
 
 export default UserDashboard;
