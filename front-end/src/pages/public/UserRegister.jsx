@@ -1,4 +1,4 @@
-import { Anchor, TextInput, Flex, Button, Card, Stack, Select } from '@mantine/core';
+import { Anchor, TextInput, Flex, Button, Card, Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { DatePickerInput } from "@mantine/dates";
 import '@mantine/dates/styles.css';
@@ -7,7 +7,7 @@ import { IconCalendar } from '@tabler/icons-react';
 import api from "../../api";
 import PasswordStrengthForm from "../../components/PasswordStrengthForm";
 
-function UserRegister({ isAdmin = false }) {
+function UserRegister() {
     const form = useForm({
         mode: 'uncontrolled',
         initialValues: {
@@ -15,7 +15,6 @@ function UserRegister({ isAdmin = false }) {
             password: '',
             name: '',
             birth_date: '',
-            role: '', // include it but only use if isAdmin
         },
         validate: {
             email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
@@ -24,8 +23,7 @@ function UserRegister({ isAdmin = false }) {
 
     const handleSubmit = async (values) => {
         try {
-            const endpoint = isAdmin ? "/api/admin/register" : "/api/register";
-            const response = await api.post(endpoint, values);
+            const response = await api.post("/api/register", values);
             console.warn("User Registered");
         } catch (err) {
             console.error(err);
@@ -42,7 +40,6 @@ function UserRegister({ isAdmin = false }) {
                             placeholder="John Doe"
                             {...form.getInputProps('name')}
                         />
-
                         <DatePickerInput
                             leftSection={<IconCalendar size={18} stroke={1.5} />}
                             clearable
@@ -50,37 +47,19 @@ function UserRegister({ isAdmin = false }) {
                             placeholder="00/00/0000"
                             {...form.getInputProps('birth_date')}
                         />
-
                         <TextInput
                             label="Your email"
                             placeholder="youremail@example.com"
                             {...form.getInputProps('email')}
                         />
-
                         <PasswordStrengthForm
                             value={form.values.password}
-                            onChange={(event) =>
-                                form.setFieldValue('password', event.currentTarget.value)
-                            }
+                            onChange={(event) => form.setFieldValue('password', event.currentTarget.value)}
                             required
                         />
 
-                        {isAdmin && (
-                            <Select
-                                label="Role"
-                                placeholder="Select role"
-                                data={[
-                                    { value: 'Client', label: 'Client' },
-                                    { value: 'Manager', label: 'Manager' },
-                                    { value: 'Admin', label: 'Admin' },
-                                ]}
-                                {...form.getInputProps('role')}
-                            />
-                        )}
 
-                        <Button type="submit" radius="md">
-                            Register
-                        </Button>
+                        <Button type="submit" radius="md">Register</Button>
                     </Stack>
                 </form>
 

@@ -7,6 +7,7 @@ import Layout from './components/layout';
 import UserDashboard from "./pages/private/user/UserDashboard";
 
 import Homepage from './pages/public/Homepage';
+import AdminDashboard from "./pages/private/Admin/AdminDashboard";
 
 function App() {
   const [count, setCount] = useState(0)
@@ -15,14 +16,11 @@ function App() {
       <Router>
           <Routes>
 
-              <Route path="/user/login" element={<Layout><UserLogin/></Layout>}></Route>
-              <Route path="/user/register" element={<UserRegister/>}></Route>
-              <Route path="/user/dashboard" element={<UserDashboard/>}></Route>
-              
-
+              <Route path="/login" element={<Layout><UserLogin/></Layout>}></Route>
+              <Route path="/register" element={<Layout><UserRegister/></Layout>}></Route>
+              <Route path="/user/dashboard" element={<Layout><UserDashboard/></Layout>}></Route>
               <Route path="/" element={<Layout><Homepage/></Layout>}></Route>
 
-              
 
           </Routes>
         </Router>

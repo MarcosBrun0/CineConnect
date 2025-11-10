@@ -1,55 +1,40 @@
-import {Card, Paper, Stack} from '@mantine/core';
 import { useState, useEffect } from 'react';
 import api from "../../../api";
-import {Calendar} from "@mantine/dates";
+import AdminDashboard from "../Admin/AdminDashboard";
+import ClientDashboard from "../Client/ClientDashBoard";
 
 function UserDashboard() {
-    const [user, setUser] = useState(null);
+    const [role, setRole] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchUser = async () => {
+        const fetchUserRole = async () => {
             try {
-                const response = await api.get("/api/me", {
-                    withCredentials: true, // ensures cookies are sent
-                });
-                setUser(response.data);
-            } catch (error) {
-                console.error("Error fetching user:", error);
+                const response = await api.get("/api/me");
+                setRole(response.data.roleName);
+            } catch (err) {
+                console.error("Error fetching user role:", err);
+            } finally {
+                setLoading(false);
             }
         };
 
-        fetchUser();
+        fetchUserRole();
     }, []);
 
-    return (
-        <div>
-            <Card shadow="lg" withBorder radius="md">
-                <h2>UserDashboard</h2>
-                {user ? (
-                    <h2>Hello {user.name}!</h2>
-                ) : (
-                    <p>Loading...</p>
-                )}
-            </Card>
-            <Stack gap="sm">
-                <div>
-                    {user ? (
-                        <h2>Hello {user.name}!</h2>
-                    ) : (
-                        <p>Loading...</p>
-                    )}
-                </div>
-                {user ? (
+    if (loading) return <p>Loading...</p>;
 
-                    <h2>Your Birthdate is {user.birth_date}</h2>
-                    ) : (
-                    <p>Loading...</p>
-                    )}
-
-            </Stack>
-
-        </div>
-    );
+    switch (role) {
+        case "Admin":
+            return <AdminDashboard />;
+        case "Client":
+        case "Cashier":
+        case "Employee":
+        case "Manager":
+            return <ClientDashboard />;
+        default:
+            return <p>Invalid Role, please try again.</p>;
+    }
 }
 
 export default UserDashboard;
