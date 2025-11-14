@@ -6,4 +6,9 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
     plugins: [tailwindcss(),
         react()],
+    server: {
+        allowedHosts: ['cineconnect.com'],
+        host: true,          // allow external hostnames
+        strictPort: false,   // optional
+    },
 });
