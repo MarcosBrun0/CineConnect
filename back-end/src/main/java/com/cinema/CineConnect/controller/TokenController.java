@@ -45,10 +45,10 @@ public class TokenController {
 
         ResponseCookie cookie = ResponseCookie.from("token",jwtValue)
                 .httpOnly(true)
-                .secure(false)  //not using https in dev environment
+                .secure(true)  //using https, so it's set to true
                 .path("/")
                 .maxAge(expiresIn)
-                .sameSite("Strict")
+                .sameSite("None") //Set to false, since localhost =/= cineconnect.com
                 .build();
 
 
