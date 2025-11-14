@@ -1,9 +1,10 @@
 import { Payment } from '@mercadopago/sdk-react';
 
-function PaymentBrick() {
+function PaymentBrick({preference}) {
+    console.log(preference)
     const initialization = {
         amount: 100,
-        preferenceId: "<PREFERENCE_ID>",
+        preferenceId: preference,
     };
     const customization = {
         paymentMethods: {
@@ -43,7 +44,9 @@ function PaymentBrick() {
         console.log(error);
     };
     const onReady = async () => {
+        console.log(preferences);
         /*
+
           Callback chamado quando o Brick estiver pronto.
           Aqui você pode ocultar loadings do seu site, por exemplo.
         */

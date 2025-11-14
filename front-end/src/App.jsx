@@ -9,12 +9,10 @@ import UserDashboard from "./pages/private/user/UserDashboard";
 import Homepage from './pages/public/Homepage';
 import AdminDashboard from "./pages/private/Admin/AdminDashboard";
 import PaymentBrick from "./components/MercadoPago/PaymentBrick";
-import { initMercadoPago } from '@mercadopago/sdk-react';
+import api from "./api";
+import PaymentPage from "./pages/private/payment/PaymentPage";
 function App() {
   const [count, setCount] = useState(0)
-
-
-    initMercadoPago(import.meta.env.VITE_MERCADO_PAGO_PUBLIC_KEY);
 
   return (
       <Router>
@@ -24,7 +22,7 @@ function App() {
               <Route path="/register" element={<Layout><UserRegister/></Layout>}></Route>
               <Route path="/user/dashboard" element={<Layout><UserDashboard/></Layout>}></Route>
               <Route path="/" element={<Layout><Homepage/></Layout>}></Route>
-              <Route path="/payment" element={<Layout><PaymentBrick/></Layout>}></Route>
+              <Route path="/payment" element={<Layout><Paymentage/></Layout>}></Route>
 
 
           </Routes>
