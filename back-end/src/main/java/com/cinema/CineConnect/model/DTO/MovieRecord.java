@@ -1,12 +1,17 @@
-package com.cinema.CineConnect.model.DTO;// src/main/java/com/cinema/CineConnect/model/MovieRecord.java
+package com.cinema.CineConnect.model.DTO;
 
 import java.math.BigDecimal;
 
 public record MovieRecord(
-        Integer movieId,
-        String name,
+        Integer id,
+        String title,
+        String synopsis,
+        String genre,
         Integer duration,
-        BigDecimal rating, // Was Integer, should be BigDecimal or Double for decimals
-        String img
+        BigDecimal rating,
+        String imageFilename // Apenas o nome: "foto.jpg"
 ) {
+    public String getFullImageUrl() {
+        return "/uploads/" + imageFilename;
+    }
 }
