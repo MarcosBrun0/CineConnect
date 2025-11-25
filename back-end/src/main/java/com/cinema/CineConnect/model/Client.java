@@ -1,12 +1,15 @@
-package com.cinema.CineConnect.model; // Or your actual package
+package com.cinema.CineConnect.model;
 
 import java.time.LocalDate;
 
-public record Client(
-        Integer id,
-        String email,
-        String password,
-        String name,
-        LocalDate birthDate
-) {
+public class Client extends User{
+
+    public Client( String name,String password, String email, String role, LocalDate birth_date) {
+        super(name,password, email, role, birth_date);
+    }
+
+    public String GetInfo() {
+        return ("Hello user "+name+"! your email is "+email+" you are a client!");
+    }
+
 }

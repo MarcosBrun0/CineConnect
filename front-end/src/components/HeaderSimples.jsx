@@ -1,0 +1,54 @@
+import { ActionIcon, Container, Group, Button } from '@mantine/core';
+
+import {useNavigate} from "react-router-dom";
+
+export function HeaderSimples() {
+    const nav = useNavigate();
+
+    const gotoLogin=()=>{
+        nav("/login");
+    }
+
+    const gotoRegister=()=>{
+        nav("/register");
+    }
+
+  return (
+    <div className="border-b border-gray-200 py-1 bg-gray-50">
+      <Container className="flex items-center justify-between">
+        
+        {/*
+          AJUSTE: Agrupando a logo e o texto em um link (prática padrão)
+          e usando 'gap="xs"' para manter os elementos próximos.
+        */}
+        <a href="/" className="flex items-center space-x-2 text-gray-900 no-underline">
+          <img 
+            src="/logo.svg" 
+            style={{ height: '35px', width: "auto" }} /* Ajuste a altura para 35px */
+            alt="CineConnect Logo" 
+          />
+          <span className="text-xl font-semibold">CineConnect</span>
+        </a>
+
+        {/* Links de Navegação */}
+        <Group gap={0} justify="flex-center" wrap="nowrap" className="hidden sm:flex">
+          <Button variant="subtle">
+            <a href="#" className="text-gray-500 transition hover:text-gray-500/75">Movies</a>
+          </Button>
+          <Button variant="subtle">
+            <a href="#" className="text-gray-500 transition hover:text-gray-500/75">Store</a>
+          </Button>
+        </Group>
+
+        {/* Botões de Ação */}
+        <Group gap={0} justify="flex-end" wrap="nowrap">
+          <Button variant="outline" size="xs" onClick={gotoRegister}>Register</Button>
+          <div className="pl-1"></div>
+          <Button variant="filled" size="xs" onClick={gotoLogin}>Login</Button>
+        </Group>
+
+      </Container>
+    </div>
+  );
+}
+export default HeaderSimples;

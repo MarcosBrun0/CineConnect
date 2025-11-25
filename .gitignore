@@ -37,6 +37,9 @@ back-end/.mvn/wrapper/maven-wrapper.jar
 # Ignore custom settings for run/debug configurations
 .idea/runConfigurations/
 
+app.key
+app.pub
+
 .DS_Store
 
 ### STS ###

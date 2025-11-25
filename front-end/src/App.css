@@ -1,42 +1,120 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+:root {
+    --bg-color: #f8f9fa;       /* Um cinza muito claro, quase branco */
+    --card-bg: #ffffff;        /* Branco puro para os cartões */
+    --text-main: #2c3e50;      /* Azul escuro/Cinza para textos principais */
+    --text-secondary: #6c757d; /* Cinza médio para detalhes */
+    --primary-color: #3498db;  /* Um azul padrão para destaques */
+    --border-radius: 8px;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Segoe UI', 'Roboto', Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+/* --- Cabeçalho --- */
+.header {
+    text-align: center;
+    margin-bottom: 50px;
 }
 
-.card {
-  padding: 2em;
+.header h1 {
+    font-size: 2.5rem;
+    color: var(--text-main);
+    margin-bottom: 10px;
+    font-weight: 700;
 }
 
-.read-the-docs {
-  color: #888;
+.header p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+/* --- Grid de Filmes --- */
+.movies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 30px;
+}
+
+/* --- Cartão do Filme --- */
+.movie-card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    /* A sombra é crucial no tema branco para dar profundidade */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border: 1px solid #eaeaea; /* Borda sutil */
+}
+
+.movie-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+}
+
+.movie-poster {
+    width: 100%;
+    height: 360px; /* Altura fixa para manter alinhamento */
+    object-fit: cover;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.movie-info {
+    padding: 20px;
+}
+
+.movie-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    color: var(--text-main);
+    /* Trunca o texto se for muito longo */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.movie-genre {
+    display: inline-block;
+    font-size: 0.85rem;
+    color: var(--primary-color);
+    background-color: #ebf5fb; /* Fundo azul bem clarinho */
+    padding: 2px 8px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.movie-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #f0f0f0;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.rating-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--text-main);
+    font-weight: bold;
+}
+
+.star {
+    color: #f1c40f; /* Amarelo ouro */
 }

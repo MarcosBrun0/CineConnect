@@ -1,17 +1,21 @@
 package com.cinema.CineConnect.controller;
 
-import com.cinema.CineConnect.model.Movie;
+import com.cinema.CineConnect.model.DTO.MovieRecord;
 import com.cinema.CineConnect.repository.MovieRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.cinema.CineConnect.service.MovieService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/movie")
+@CrossOrigin(origins = "http://localhost:5173")
 public class MovieController {
 
     private final MovieRepository movieRepository;
@@ -20,15 +24,24 @@ public class MovieController {
         this.movieRepository = movieRepository;
     }
 
-        @GetMapping
-        public List<Movie> findAll() {
-            return movieRepository.findAll();
+    @Autowired
+    private MovieService movieService;
+
+    @PostMapping
+    public ResponseEntity<MovieRecord> createMovie(
+            @RequestPart("movie") MovieRecord movie, // O JSON
+            @RequestPart("file") MultipartFile file // O Arquivo
+    ) {
+        try {
+            MovieRecord savedMovie = movieService.saveMovieWithImage(movie, file);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedMovie);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
 
-
-        @GetMapping("/{name}")
-        public Optional<Movie> findByName(@PathVariable String name) {
-            return movieRepository.findByName(name);
-
-        }
+    @GetMapping
+    public List<MovieRecord> getAllMovies() {
+        return movieService.findAll();
+    }
 }
