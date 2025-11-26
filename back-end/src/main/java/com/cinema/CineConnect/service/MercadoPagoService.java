@@ -1,5 +1,9 @@
 package com.cinema.CineConnect.service;
 
+import com.cinema.CineConnect.model.DTO.ProductRecord;
+import com.cinema.CineConnect.model.FoodProduct;
+import com.cinema.CineConnect.model.Product;
+import com.cinema.CineConnect.model.Ticket;
 import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.client.payment.PaymentClient;
 import com.mercadopago.client.payment.PaymentCreateRequest;
@@ -10,9 +14,9 @@ import com.mercadopago.client.preference.PreferenceRequest;
 import com.mercadopago.core.MPRequestOptions;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
-import com.mercadopago.resources.order.Order;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.util.*;
@@ -27,27 +31,54 @@ public class MercadoPagoService {
 
     @PostConstruct
     public void init() {
-        // Set your Mercado Pago access token
         MercadoPagoConfig.setAccessToken(accessToken);
         client = new PreferenceClient();
     }
-    /**
-     * Creates a preference in Mercado Pago and returns the preference ID
-     */
-    public String createPreference() {
-        var title="produto";
-        BigDecimal price= BigDecimal.valueOf(10);
+
+    // convert DTO to Domain Object
+    public Product processProduct(ProductRecord productRecord) {
+        return switch (productRecord.type()) {
+            case "TICKET" -> new Ticket(
+                    productRecord.productId(),
+                    productRecord.sessionId(),
+                    productRecord.name(),
+                    productRecord.type(),
+                    productRecord.price()
+            );
+            case "FOOD" -> new FoodProduct(productRecord);
+            default -> throw new RuntimeException("Invalid product type " + productRecord.type());
+        };
+    }
+
+    public String createPreference(List<ProductRecord> cart) {
         List<PreferenceItemRequest> items = new ArrayList<>();
-        items.add(
-                PreferenceItemRequest.builder()
-                        .title(title)
-                        .quantity(1)
-                        .unitPrice(price)
-                        .build()
-        );
+
+        for (ProductRecord productRecord : cart) {
+            Product currentProduct = processProduct(productRecord);
+
+            // 1. Add the main item
+            items.add(PreferenceItemRequest.builder()
+                    .title(currentProduct.getProductName())
+                    .quantity(1)
+                    .unitPrice(new BigDecimal(currentProduct.getProductPrice()))
+                    .build());
+
+            // 2. CHECK FOR ADD-ONS
+            if (currentProduct instanceof FoodProduct foodProduct) {
+                List<FoodProduct> addOns = foodProduct.getAddOns();
+                if (addOns != null && !addOns.isEmpty()) {
+                    for (FoodProduct addOn : addOns) {
+                        items.add(PreferenceItemRequest.builder()
+                                .title("Add-on: " + addOn.getProductName()) // Indication it's an add-on
+                                .quantity(1)
+                                .unitPrice(new BigDecimal(addOn.getProductPrice()))
+                                .build());
+                    }
+                }
+            }
+        }
 
         PreferenceRequest request = PreferenceRequest.builder()
-                //.purpose("wallet_purchase") // optional: remove to allow guest payments
                 .items(items)
                 .build();
 
@@ -58,48 +89,38 @@ public class MercadoPagoService {
         }
     }
 
-    public Map<String, String> createPayment() {
+    // Updated to accept Email
+    public Map<String, String> createPayment(String payerEmail) {
         UUID uuid = UUID.randomUUID();
-        Map<String, String> customHeaders = new HashMap<>();
-        customHeaders.put("x-idempotency-key",uuid.toString());
 
         MPRequestOptions requestOptions = MPRequestOptions.builder()
-                .customHeaders(customHeaders)
+                .customHeaders(Map.of("x-idempotency-key", uuid.toString()))
                 .build();
 
-        MercadoPagoConfig.setAccessToken(accessToken);
-
-        PaymentClient client = new PaymentClient();
+        PaymentClient paymentClient = new PaymentClient();
 
         PaymentCreateRequest paymentCreateRequest =
                 PaymentCreateRequest.builder()
                         .transactionAmount(new BigDecimal("100"))
+                        .description("Cinema Ticket Purchase")
                         .paymentMethodId("pix")
-                        .payer(
-                                PaymentPayerRequest.builder()
-                                        .email("PAYER_EMAIL_HERE")
-                                        .build())
+                        .payer(PaymentPayerRequest.builder().email(payerEmail).build())
                         .build();
 
         try {
-            Order order = client.create(paymentCreateRequest, requestOptions);
+            var response = paymentClient.create(paymentCreateRequest, requestOptions);
 
-            // Converte a resposta em Map<String, String> usando Jackson
-            ObjectMapper mapper = new ObjectMapper();
             Map<String, String> result = new HashMap<>();
-
-            // Adiciona apenas campos simples como string
             result.put("id", response.getId() != null ? response.getId().toString() : null);
             result.put("status", response.getStatus());
+            result.put("qr_code", response.getPointOfInteraction().getTransactionData().getQrCode()); // Useful for PIX
+            result.put("qr_code_base64", response.getPointOfInteraction().getTransactionData().getQrCodeBase64()); // Useful for PIX
             result.put("paymentMethodId", response.getPaymentMethodId());
-            result.put("payerEmail", response.getPayer() != null ? response.getPayer().getEmail() : null);
 
             return result;
-            return (client.create(paymentCreateRequest, requestOptions));
+
         } catch (MPException | MPApiException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error processing payment", e);
         }
-
-
     }
 }

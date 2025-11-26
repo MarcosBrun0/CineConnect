@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import api from "../../../api";
-import PaymentBrick from "../../../components/MercadoPago/PaymentBrick";
+import CheckoutPro from "../../../components/MercadoPago/CheckoutPro";
 import { initMercadoPago } from '@mercadopago/sdk-react';
 
 
@@ -18,7 +18,19 @@ export function PaymentPage() {
                 setIsLoading(true);
                 setError(null);
 
-                const response = await api.get("api/preferences")
+                // Placeholder cart data - Replace with actual cart context later
+                const cartData = [
+                    {
+                        productId: "123e4567-e89b-12d3-a456-426614174000",
+                        name: "Dummy Ticket",
+                        type: "TICKET",
+                        price: 100.0,
+                        sessionId: "123e4567-e89b-12d3-a456-426614174001",
+                        addOns: []
+                    }
+                ];
+
+                const response = await api.post("/api/createcart", cartData);
 
                 setPreference(response.data);
 
@@ -45,8 +57,8 @@ export function PaymentPage() {
 
     return (
         <div>
-        <h1>{pref}</h1>
-        <PaymentBrick preference={pref}></PaymentBrick>
+            <h1>{pref}</h1>
+            <CheckoutPro preferenceId={pref} />
         </div>
     );
 }

@@ -63,7 +63,6 @@ public class UserRepository {
                 .list();
     }
 
-
     public Optional<UserRecordRoleName> findInfoById(UUID uuid) {
         return jdbcClient.sql("""
             SELECT users.id,users.name,email,password,birth_date,roles.name as roleName

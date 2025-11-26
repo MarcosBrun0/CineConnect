@@ -1,41 +1,35 @@
 package com.cinema.CineConnect.controller;
 
+import com.cinema.CineConnect.model.DTO.ProductRecord;
 import com.cinema.CineConnect.service.MercadoPagoService;
-import com.mercadopago.MercadoPagoConfig;
-import com.mercadopago.client.payment.PaymentClient;
-import com.mercadopago.client.payment.PaymentCreateRequest;
-import com.mercadopago.client.payment.PaymentPayerRequest;
-import com.mercadopago.core.MPRequestOptions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.*; // Using wildcard for brevity
 
-import java.math.BigDecimal;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
 public class MercadoPagoController {
-    MercadoPagoService mercadoPagoService;
 
-    MercadoPagoController(MercadoPagoService mercadoPagoService) {
+    private final MercadoPagoService mercadoPagoService;
+
+    // Recommendation: Use constructor injection (standard in Spring)
+    public MercadoPagoController(MercadoPagoService mercadoPagoService) {
         this.mercadoPagoService = mercadoPagoService;
     }
 
-    @GetMapping("/api/preferences")
-    public String preferenceid() {
-        return mercadoPagoService.createPreference();
+    @PostMapping("/api/createcart")
+    public ResponseEntity<String> createPreference(@RequestBody List<ProductRecord> cart) {
+        // Fix: Call service once and return the ID
+        String preferenceId = mercadoPagoService.createPreference(cart);
+        return ResponseEntity.ok(preferenceId);
     }
 
     @PostMapping("/api/handlePayments")
-    public ResponseEntity<String> handlePayments(@RequestBody String email) {
-        mercadoPagoService.createPayment();
-
-
+    public ResponseEntity<Map<String, String>> handlePayments(@RequestBody Map<String, String> payload) {
+        // Assuming payload contains "email" and potentially "amount"
+        String email = payload.get("email");
+        // You should probably pass the amount here or calculate it based on an Order ID
+        return ResponseEntity.ok(mercadoPagoService.createPayment(email));
     }
 }

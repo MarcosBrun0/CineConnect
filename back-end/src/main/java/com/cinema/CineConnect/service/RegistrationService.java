@@ -41,7 +41,7 @@ public class RegistrationService {
                 "Client",
                 registrationRequestRecord.birth_date()
         );
-        if(verifyIfUserExists(registrationRequestRecord.email())){
+        if(!(verifyIfUserExists(registrationRequestRecord.email()))){
             throw new DataIntegrityViolationException("An user with this email already exists");
         }
         var roleId = roleRepository.findRoleID(client.getRole());
@@ -102,7 +102,7 @@ public class RegistrationService {
     public void adminCreateAndSaveUser(AdminRegistrationRequestRecord adminRegistrationRequestRecord) {
         var user = createUserObject(adminRegistrationRequestRecord);
 
-        if(verifyIfUserExists(adminRegistrationRequestRecord.email())){
+        if(!(verifyIfUserExists(adminRegistrationRequestRecord.email()))){
             throw new DataIntegrityViolationException("An user with this email already exists");
         }
         var roleId = roleRepository.findRoleID(user.getRole());
@@ -112,5 +112,5 @@ public class RegistrationService {
         userRepository.saveUser(user, roleId.get());
 
 
-        }
-        }
+    }
+}

@@ -70,6 +70,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/preferences").permitAll()
                         .requestMatchers("/api/movie").permitAll()
                         .requestMatchers("/api/register").permitAll()
+                        .requestMatchers("/api/createcart").permitAll()
                         .anyRequest().authenticated()
                 );
 
