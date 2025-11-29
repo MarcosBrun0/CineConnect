@@ -12,3 +12,4 @@ public record ProductRecord(
         List<ProductRecord> addOns
 ) {
 }
+

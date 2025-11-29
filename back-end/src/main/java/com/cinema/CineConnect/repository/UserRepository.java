@@ -30,7 +30,7 @@ public class UserRepository {
     public Optional<UserRecordRoleName> findByEmailRoleName(String email) {
         return jdbcClient.sql("""
             SELECT users.id,users.name,email,password,birth_date,roles.name as roleName
-            FROM users 
+            FROM users
             INNER JOIN roles 
             ON users.role_id = roles.id 
             WHERE email = :email
