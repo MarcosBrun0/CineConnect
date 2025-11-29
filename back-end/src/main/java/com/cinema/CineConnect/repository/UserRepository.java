@@ -52,6 +52,8 @@ public class UserRepository {
                 .update();
     }
 
+
+
     public List<UserRecordRoleName> findAllUsersRoleName() {
         return jdbcClient.sql("""
          
@@ -62,7 +64,6 @@ public class UserRepository {
                 .query(UserRecordRoleName.class)
                 .list();
     }
-
 
     public Optional<UserRecordRoleName> findInfoById(UUID uuid) {
         return jdbcClient.sql("""

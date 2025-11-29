@@ -112,5 +112,5 @@ public class RegistrationService {
         userRepository.saveUser(user, roleId.get());
 
 
-        }
-        }
+    }
+}
