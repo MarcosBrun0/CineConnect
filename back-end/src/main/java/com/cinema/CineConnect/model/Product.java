@@ -1,14 +1,15 @@
 package com.cinema.CineConnect.model;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public abstract class Product {
     UUID productId;
     String name;
     String type;
-    Float price;
+    BigDecimal price;
 
-    public Product(UUID productId, String name, String type, Float price) {
+    public Product(UUID productId, String name, String type, BigDecimal price) {
         this.productId = productId;
         this.name = name;
         this.type = type;
@@ -20,10 +21,9 @@ public abstract class Product {
     public String getProductType() {
         return type;
     }
-    public Float getProductPrice() {
-        return price;
+    public BigDecimal getProductPrice() {return price;
     }
-    public void setProductPrice(Float price) {
+    public void setProductPrice(BigDecimal price) {
         this.price = price;
     }
     public UUID getProductProductId(){

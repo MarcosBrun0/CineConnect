@@ -60,7 +60,7 @@ public class MercadoPagoService {
             items.add(PreferenceItemRequest.builder()
                     .title(currentProduct.getProductName())
                     .quantity(1)
-                    .unitPrice(new BigDecimal(currentProduct.getProductPrice()))
+                    .unitPrice(currentProduct.getProductPrice())
                     .build());
 
             // 2. CHECK FOR ADD-ONS
@@ -71,7 +71,7 @@ public class MercadoPagoService {
                         items.add(PreferenceItemRequest.builder()
                                 .title("Add-on: " + addOn.getProductName()) // Indication it's an add-on
                                 .quantity(1)
-                                .unitPrice(new BigDecimal(addOn.getProductPrice()))
+                                .unitPrice(addOn.getProductPrice())
                                 .build());
                     }
                 }

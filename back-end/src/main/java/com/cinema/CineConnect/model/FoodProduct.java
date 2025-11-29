@@ -1,6 +1,8 @@
 package com.cinema.CineConnect.model;
 
 import com.cinema.CineConnect.model.DTO.ProductRecord;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -9,7 +11,7 @@ public class FoodProduct extends Product {
 
     private List<FoodProduct> addOns;
 
-    public FoodProduct(UUID productId, String name, String type, Float price) {
+    public FoodProduct(UUID productId, String name, String type, BigDecimal price) {
         super(productId, name, type, price);
         this.addOns = new ArrayList<>();
     }
