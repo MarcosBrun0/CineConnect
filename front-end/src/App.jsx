@@ -9,8 +9,6 @@ import UserDashboard from "./pages/private/user/UserDashboard";
 import Homepage from './pages/public/Homepage';
 import AdminDashboard from "./pages/private/Admin/AdminDashboard";
 
-import api from "./api";
-import PaymentPage from "./pages/private/payment/PaymentPage";
 function App() {
   const [count, setCount] = useState(0)
 
@@ -22,8 +20,6 @@ function App() {
         <Route path="/register" element={<Layout><UserRegister /></Layout>}></Route>
         <Route path="/user/dashboard" element={<Layout><UserDashboard /></Layout>}></Route>
         <Route path="/" element={<Layout><Homepage/></Layout>}></Route>
-        <Route path="/payment" element={<Layout><PaymentPage /></Layout>}></Route>
-        <Route path="/store" element={<Layout> A </Layout>}>ascscsca</Route>
 
 
       </Routes>

@@ -52,6 +52,8 @@ public class UserRepository {
                 .update();
     }
 
+
+
     public List<UserRecordRoleName> findAllUsersRoleName() {
         return jdbcClient.sql("""
          
