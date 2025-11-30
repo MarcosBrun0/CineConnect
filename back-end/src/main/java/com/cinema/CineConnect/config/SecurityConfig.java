@@ -69,6 +69,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/login").permitAll()
                         .requestMatchers("/api/movie").permitAll()
                         .requestMatchers("/api/register").permitAll()
+                        .requestMatchers("/uploads/**").permitAll() // Libera acesso às imagens
                         .anyRequest().authenticated()
                 );
 
