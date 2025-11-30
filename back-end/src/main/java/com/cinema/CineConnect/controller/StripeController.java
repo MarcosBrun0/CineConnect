@@ -1,18 +1,19 @@
 package com.cinema.CineConnect.controller;
 
 import com.cinema.CineConnect.model.DTO.ProductRecord;
+import com.cinema.CineConnect.model.DTO.UserRecordRoleName;
+import com.cinema.CineConnect.repository.UserRepository;
 import com.cinema.CineConnect.service.StripeService;
 import com.cinema.CineConnect.service.TicketService;
-import com.stripe.exception.SignatureVerificationException;
-import com.stripe.model.Event;
-import com.stripe.model.checkout.Session;
-import com.stripe.net.Webhook;
-import org.springframework.beans.factory.annotation.Value;
+import com.stripe.model.PaymentIntent;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/stripe")
@@ -20,16 +21,15 @@ public class StripeController {
 
     private final StripeService stripeService;
     private final TicketService ticketService;
+    private final UserRepository userRepository;
 
-    @Value("${STRIPE_WEBHOOK_SECRET}")
-    private String endpointSecret;
-
-    public StripeController(StripeService stripeService, TicketService ticketService) {
+    public StripeController(StripeService stripeService, TicketService ticketService, UserRepository userRepository) {
         this.stripeService = stripeService;
         this.ticketService = ticketService;
+        this.userRepository = userRepository;
     }
 
-    //Checkout Session
+    // Checkout Session
     @PostMapping("/create-session")
     public ResponseEntity<String> createCheckoutSession(
             @RequestBody List<ProductRecord> cart,
@@ -40,36 +40,47 @@ public class StripeController {
         return ResponseEntity.ok(checkoutUrl);
     }
 
-
-    //Receives successful transactions
-    @PostMapping("/webhook")
-    public ResponseEntity<String> handleWebhook(
-            @RequestBody String payload,
-            @RequestHeader("Stripe-Signature") String sigHeader) {
-
-        Event event;
+    @PostMapping("/create-payment-intent")
+    public ResponseEntity<String> createPaymentIntent(@RequestBody List<ProductRecord> cart) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userIdStr = authentication.getName();
+        UserRecordRoleName user = userRepository.findInfoById(UUID.fromString(userIdStr))
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         try {
-            event = Webhook.constructEvent(payload, sigHeader, endpointSecret);
-        } catch (SignatureVerificationException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Webhook signature verification failed");
+            com.stripe.model.PaymentIntent paymentIntent = stripeService.createPaymentIntent(cart,
+                    UUID.fromString(user.id()));
+            return ResponseEntity.ok(paymentIntent.getClientSecret());
+        } catch (com.stripe.exception.StripeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-
-        switch (event.getType()) {
-            case "checkout.session.completed":
-                Session session = (Session) event.getDataObjectDeserializer().getObject().orElse(null);
-                if (session != null) {
-                    String sessionId = session.getId();
-                    ticketService.markTicketsAsPaid(sessionId);
-                }
-                break;
-            case "payment_intent.payment_failed":
-                // Log ou notificação de falha
-                break;
-            default:
-                break;
-        }
-
-        return ResponseEntity.ok("");
     }
+
+    @PostMapping("/confirm-payment")
+    public ResponseEntity<String> confirmPayment(@RequestBody java.util.Map<String, String> payload) {
+        String paymentIntentId = payload.get("paymentIntentId");
+        if (paymentIntentId == null) {
+            return ResponseEntity.badRequest().body("Missing paymentIntentId");
+        }
+
+        try {
+            PaymentIntent paymentIntent = stripeService.retrievePaymentIntent(paymentIntentId);
+            if ("succeeded".equals(paymentIntent.getStatus())) {
+                String purchaseIdStr = paymentIntent.getMetadata().get("purchaseId");
+                if (purchaseIdStr != null) {
+                    ticketService.confirmPurchase(UUID.fromString(purchaseIdStr));
+                    return ResponseEntity.ok("Payment confirmed and purchase fulfilled");
+                } else {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body("Purchase ID not found in metadata");
+                }
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("Payment not succeeded: " + paymentIntent.getStatus());
+            }
+        } catch (com.stripe.exception.StripeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
 }

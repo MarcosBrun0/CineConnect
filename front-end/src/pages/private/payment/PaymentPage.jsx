@@ -1,64 +1,82 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
 import api from "../../../api";
-import CheckoutPro from "../../../components/MercadoPago/CheckoutPro";
-import { initMercadoPago } from '@mercadopago/sdk-react';
+import CheckoutForm from "../../../components/CheckoutForm";
+import { useCart } from "../../../context/CartContext";
 
+// Make sure to call loadStripe outside of a component’s render to avoid
+// recreating the Stripe object on every render.
+// This is your test publishable API key.
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 export function PaymentPage() {
-    const [pref, setPreference] = useState("id");
+    const [clientSecret, setClientSecret] = useState("");
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    initMercadoPago(import.meta.env.VITE_MERCADO_PAGO_PUBLIC_KEY);
+    const { cart } = useCart();
 
-    // useEffect para chamar a API
     useEffect(() => {
-        const fetchPreferences = async () => {
+        // Create PaymentIntent as soon as the page loads
+        const createPaymentIntent = async () => {
+            if (cart.length === 0) {
+                setIsLoading(false);
+                return;
+            }
+
             try {
                 setIsLoading(true);
-                setError(null);
+                // Map cart to ProductRecord format expected by backend
+                const productRecords = cart.map(item => ({
+                    productId: item.productId,
+                    name: item.name,
+                    type: item.type,
+                    price: item.price,
+                    sessionId: item.sessionId, // Ensure this exists in cart item
+                    // Add other fields if necessary
+                }));
 
-                // Placeholder cart data - Replace with actual cart context later
-                const cartData = [
-                    {
-                        productId: "123e4567-e89b-12d3-a456-426614174000",
-                        name: "Dummy Ticket",
-                        type: "TICKET",
-                        price: 100.0,
-                        sessionId: "123e4567-e89b-12d3-a456-426614174001",
-                        addOns: []
-                    }
-                ];
-
-                const response = await api.post("/api/createcart", cartData);
-
-                setPreference(response.data);
-
+                const response = await api.post("/api/stripe/create-payment-intent", productRecords);
+                setClientSecret(response.data);
+                setIsLoading(false);
             } catch (err) {
-                console.error("Erro ao buscar página de pagamento:", err);
-                setError("Não foi possível carregar o conteúdo. Verifique o servidor e o CORS.");
-                setDebugJson(`ERRO: ${err.message}`);
-
-            } finally {
+                console.error("Error creating payment intent:", err);
+                setError("Failed to initialize payment. Please try again.");
                 setIsLoading(false);
             }
         };
 
-        fetchPreferences();
-    }, []);
+        createPaymentIntent();
+    }, [cart]);
+
+    const appearance = {
+        theme: 'stripe',
+    };
+    const options = {
+        clientSecret,
+        appearance,
+    };
 
     if (isLoading) {
-        return <div className="p-8 text-center text-lg">Carregando...</div>;
+        return <div className="p-8 text-center text-lg">Loading Payment...</div>;
     }
 
     if (error) {
-        return <div className="p-8 text-center text-lg text-red-600">Erro: {error}</div>;
+        return <div className="p-8 text-center text-lg text-red-600">Error: {error}</div>;
+    }
+
+    if (!clientSecret) {
+        return <div className="p-8 text-center text-lg">Cart is empty or payment initialization failed.</div>;
     }
 
     return (
-        <div>
-            <h1>{pref}</h1>
-            <CheckoutPro preferenceId={pref} />
+        <div className="p-8 flex flex-col items-center">
+            <h1 className="text-2xl font-bold mb-6">Payment</h1>
+            {clientSecret && (
+                <Elements options={options} stripe={stripePromise}>
+                    <CheckoutForm />
+                </Elements>
+            )}
         </div>
     );
 }
