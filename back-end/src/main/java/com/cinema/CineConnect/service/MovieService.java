@@ -1,7 +1,7 @@
 package com.cinema.CineConnect.service;
 
 import com.cinema.CineConnect.model.DTO.MovieRecord;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.cinema.CineConnect.repository.MovieRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -16,15 +16,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class MovieService {
 
     private final JdbcClient jdbcClient;
-    private final Path rootLocation; // Pasta de uploads
+    private final MovieRepository movieRepository; // Adicionado aqui
+    private final Path rootLocation;
 
-    // Mapeia o resultado do banco para o Record
     private static final RowMapper<MovieRecord> MOVIE_ROW_MAPPER = (rs, rowNum) -> new MovieRecord(
             rs.getInt("id"),
             rs.getString("title"),
@@ -35,9 +36,12 @@ public class MovieService {
             rs.getString("image_filename")
     );
 
-    @Autowired
-    public MovieService(JdbcClient jdbcClient, @Value("${file.upload-dir}") String uploadDir) {
+    // CORREÇÃO: Injetando o Repository via construtor
+    public MovieService(JdbcClient jdbcClient,
+                        MovieRepository movieRepository,
+                        @Value("${file.upload-dir}") String uploadDir) {
         this.jdbcClient = jdbcClient;
+        this.movieRepository = movieRepository;
         this.rootLocation = Paths.get(uploadDir);
         try {
             Files.createDirectories(rootLocation);
@@ -47,10 +51,7 @@ public class MovieService {
     }
 
     public MovieRecord saveMovieWithImage(MovieRecord movie, MultipartFile file) throws IOException {
-        // 1. Lidar com o Arquivo (Salvar no Disco)
         String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
-
-        // Dica: Adicionar um UUID evita que dois filmes com "poster.jpg" se sobrescrevam
         String uniqueFilename = UUID.randomUUID().toString() + "_" + originalFilename;
 
         Path destinationFile = this.rootLocation.resolve(Paths.get(uniqueFilename))
@@ -60,7 +61,6 @@ public class MovieService {
             Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
         }
 
-        // 2. Salvar no Banco de Dados
         String sql = """
                 INSERT INTO movies (title, synopsis, genre, duration, rating, image_filename)
                 VALUES (?, ?, ?, ?, ?, ?)
@@ -74,12 +74,11 @@ public class MovieService {
                         movie.genre(),
                         movie.duration(),
                         movie.rating(),
-                        uniqueFilename // Salvamos o nome gerado
+                        uniqueFilename
                 )
                 .query(Integer.class)
                 .single();
 
-        // Retorna o objeto completo com o novo ID e o nome da imagem
         return new MovieRecord(
                 generatedId, movie.title(), movie.synopsis(), movie.genre(),
                 movie.duration(), movie.rating(), uniqueFilename
@@ -87,13 +86,12 @@ public class MovieService {
     }
 
     public List<MovieRecord> findAll() {
+        // Dica: Poderia usar o repository aqui também: return movieRepository.findAll();
         return jdbcClient.sql("SELECT * FROM movies").query(MOVIE_ROW_MAPPER).list();
     }
 
-    public MovieRecord findById(Integer id) {
-        return jdbcClient.sql("SELECT * FROM movies WHERE id = ?")
-                .param(id)
-                .query(MOVIE_ROW_MAPPER)
-                .single();
+    public Optional<MovieRecord> findById(Integer id) {
+        // CORREÇÃO: Agora usa a instância injetada, não um "new"
+        return movieRepository.findById(id);
     }
 }

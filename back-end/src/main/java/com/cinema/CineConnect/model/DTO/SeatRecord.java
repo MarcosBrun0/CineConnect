@@ -1,10 +1,8 @@
 package com.cinema.CineConnect.model.DTO;
 
 public record SeatRecord(
-        Integer seat_id,
-        Integer row,
-        Integer number,
-        Integer theater_id
-
-) {
-}
+        Integer seatId,
+        Integer rowNum, // No banco está row_num
+        Integer seatNum,
+        Integer theaterId
+) {}

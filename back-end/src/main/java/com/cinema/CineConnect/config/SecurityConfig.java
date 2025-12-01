@@ -67,7 +67,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/login").permitAll()
-                        .requestMatchers("/api/movie").permitAll()
+                        .requestMatchers("/api/movie/**").permitAll()
                         .requestMatchers("/api/register").permitAll()
                         .requestMatchers("/uploads/**").permitAll() // Libera acesso às imagens
                         .anyRequest().authenticated()

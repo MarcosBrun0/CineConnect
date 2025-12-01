@@ -118,3 +118,108 @@ body {
 .star {
     color: #f1c40f; /* Amarelo ouro */
 }
+
+/* Botão de Voltar */
+.back-btn {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.2s;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    padding: 0;
+}
+
+.back-btn:hover {
+    color: var(--primary-color);
+}
+
+/* Container específico do detalhe */
+.movie-detail-card {
+    background-color: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 15px rgba(0,0,0,0.05); /* Sombra um pouco mais suave que o grid */
+    border: 1px solid #eaeaea;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Layout Responsivo (Desktop: Lado a Lado) */
+@media (min-width: 768px) {
+    .movie-detail-card {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+
+    .detail-image-container {
+        width: 350px; /* Largura fixa para o poster */
+        flex-shrink: 0;
+    }
+
+    .detail-poster {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+}
+
+/* Mobile: Imagem no topo */
+@media (max-width: 767px) {
+    .detail-image-container {
+        width: 100%;
+        height: 400px;
+    }
+    .detail-poster {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.detail-content {
+    padding: 40px;
+    flex-grow: 1;
+}
+
+.detail-title {
+    font-size: 2.5rem;
+    color: var(--text-main);
+    margin: 0 0 15px 0;
+    line-height: 1.2;
+}
+
+.detail-meta {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 25px;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+/* Reutilizando seu estilo de badge, mas ajustando o tamanho */
+.detail-genre {
+    font-size: 0.9rem;
+    padding: 4px 12px;
+}
+
+.detail-synopsis-label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--text-main);
+    font-size: 1.1rem;
+}
+
+.detail-synopsis-text {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    font-size: 1.05rem;
+    margin-bottom: 30px;
+}

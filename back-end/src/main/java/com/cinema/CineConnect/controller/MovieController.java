@@ -1,9 +1,7 @@
 package com.cinema.CineConnect.controller;
 
 import com.cinema.CineConnect.model.DTO.MovieRecord;
-import com.cinema.CineConnect.repository.MovieRepository;
 import com.cinema.CineConnect.service.MovieService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,22 +13,20 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/movie")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:5173") // Ajuste conforme seu front
 public class MovieController {
 
-    private final MovieRepository movieRepository;
+    private final MovieService movieService;
 
-    public MovieController(MovieRepository movieRepository) {
-        this.movieRepository = movieRepository;
+    // Injeção via construtor (Melhor prática)
+    public MovieController(MovieService movieService) {
+        this.movieService = movieService;
     }
-
-    @Autowired
-    private MovieService movieService;
 
     @PostMapping
     public ResponseEntity<MovieRecord> createMovie(
-            @RequestPart("movie") MovieRecord movie, // O JSON
-            @RequestPart("file") MultipartFile file // O Arquivo
+            @RequestPart("movie") MovieRecord movie,
+            @RequestPart("file") MultipartFile file
     ) {
         try {
             MovieRecord savedMovie = movieService.saveMovieWithImage(movie, file);
@@ -43,5 +39,14 @@ public class MovieController {
     @GetMapping
     public List<MovieRecord> getAllMovies() {
         return movieService.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<MovieRecord> getMovieById(@PathVariable Integer id) {
+        // CORREÇÃO: O serviço já retorna Optional, não use "Optional()" como função
+        Optional<MovieRecord> movie = movieService.findById(id);
+
+        return movie.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }
