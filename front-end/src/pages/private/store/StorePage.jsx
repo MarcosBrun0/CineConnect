@@ -54,9 +54,14 @@ function StorePage() {
                             </Badge>
                         </Group>
 
-                        <Text size="sm" c="dimmed" mb="md">
-                            ${product.price.toFixed(2)}
-                        </Text>
+                        <Group justify="space-between" mb="md">
+                            <Text size="sm" c="dimmed">
+                                ${product.price.toFixed(2)}
+                            </Text>
+                            <Badge color={product.available ? "green" : "red"} variant="light">
+                                {product.available ? `In Stock (${product.quantity})` : "Out of Stock"}
+                            </Badge>
+                        </Group>
 
                         <Button
                             color="blue"
@@ -65,8 +70,9 @@ function StorePage() {
                             radius="md"
                             leftSection={<IconShoppingCart size={18} />}
                             onClick={() => addToCart(product)}
+                            disabled={!product.available}
                         >
-                            Add to Cart
+                            {product.available ? 'Add to Cart' : 'Unavailable'}
                         </Button>
                     </Card>
                 ))}

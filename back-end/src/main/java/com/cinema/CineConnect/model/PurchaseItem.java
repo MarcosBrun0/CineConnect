@@ -18,6 +18,8 @@ public class PurchaseItem {
     private UUID productId;
     private int quantity;
     private BigDecimal priceAtPurchase;
+    private String name;
+    private String imageUrl;
     private List<PurchaseItem> addons = new ArrayList<>(); // Using PurchaseItem for addons too for simplicity
 
     public PurchaseItem(UUID productId, int quantity, BigDecimal priceAtPurchase) {

@@ -15,6 +15,10 @@ export const CartProvider = ({ children }) => {
     }, [cart]);
 
     const addToCart = (product) => {
+        if (!product.available) {
+            alert("This product is currently unavailable.");
+            return;
+        }
         setCart((prevCart) => {
             const existingItem = prevCart.find((item) => item.productId === product.productId);
             if (existingItem) {

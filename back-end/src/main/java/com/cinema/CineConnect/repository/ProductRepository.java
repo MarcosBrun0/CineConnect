@@ -1,5 +1,6 @@
 package com.cinema.CineConnect.repository;
 
+import com.cinema.CineConnect.model.DTO.ProductRecord;
 import com.cinema.CineConnect.model.DTO.TypeCount;
 import com.cinema.CineConnect.model.Product;
 import org.springframework.jdbc.core.simple.JdbcClient;
@@ -17,7 +18,7 @@ public class ProductRepository {
         this.jdbcClient = jdbcClient;
     }
 
-    public void removeProduct(JdbcClient jdbcClient, UUID id) {
+    public void removeProduct(UUID id) {
         jdbcClient.sql("""
                     DELETE FROM products
                     WHERE id = :id
@@ -26,7 +27,7 @@ public class ProductRepository {
                 .update();
     }
 
-    public boolean removeProductTypeSafely(JdbcClient jdbcClient, UUID typeId) {
+    public boolean removeProductTypeSafely(UUID typeId) {
         // check if any product uses this type
         Integer count = jdbcClient.sql("""
                     SELECT COUNT(*)
@@ -51,32 +52,43 @@ public class ProductRepository {
         return true;
     }
 
-    public List<com.cinema.CineConnect.model.DTO.ProductRecord> findAll() {
+    public List<ProductRecord> findAll() {
         return jdbcClient.sql("""
-                    SELECT p.id as productId, p.name, pt.name as type, p.price, null as sessionId, null as addOns
+                    SELECT p.id as productId, p.name, pt.name as type, p.price, image_url, p.quantity, p.available,
+                           CAST(NULL AS UUID) as sessionId,
+                           CAST(NULL AS varchar) as addOns
                     FROM products p
                     JOIN product_types pt ON p.type_id = pt.id
                 """)
-                .query(com.cinema.CineConnect.model.DTO.ProductRecord.class)
+                .query(ProductRecord.class)
                 .list();
     }
 
-    public Integer getQuantityById(JdbcClient jdbcClient, UUID productTypeId) {
+    public Integer getQuantityById(UUID productId) {
         return jdbcClient.sql("""
-                    SELECT COUNT(*)
+                    SELECT quantity
                     FROM products
-                    WHERE type_id = (
-                        SELECT type_id
-                        FROM products
-                        WHERE id = :productId
-                    )
+                    WHERE id = :productId
                 """)
-                .param("productId", productTypeId)
+                .param("productId", productId)
                 .query(Integer.class)
                 .single();
     }
 
-    public List<Product> findProductsByType(JdbcClient jdbcClient, UUID productTypeId) {
+    public void updateProductQuantity(UUID productId, int newQuantity) {
+        boolean available = newQuantity > 0;
+        jdbcClient.sql("""
+                    UPDATE products
+                    SET quantity = :quantity, available = :available
+                    WHERE id = :id
+                """)
+                .param("quantity", newQuantity)
+                .param("available", available)
+                .param("id", productId)
+                .update();
+    }
+
+    public List<Product> findProductsByType(UUID productTypeId) {
         return jdbcClient.sql("""
                     SELECT * FROM products WHERE type_id = :productType
                 """)
@@ -85,7 +97,7 @@ public class ProductRepository {
                 .list();
     }
 
-    public List<TypeCount> listTypesWithCount(JdbcClient jdbcClient) {
+    public List<TypeCount> listTypesWithCount() {
         return jdbcClient.sql("""
                     SELECT pt.id, pt.name, COUNT(p.id) AS total
                     FROM product_types pt

@@ -14,6 +14,9 @@ CREATE TABLE IF NOT EXISTS products (
                                         name VARCHAR(255) NOT NULL,
                                         price NUMERIC(10,2) NOT NULL,
                                         type_id UUID,
+                                        quantity INT NOT NULL DEFAULT 100,
+                                        available BOOLEAN NOT NULL DEFAULT TRUE,
+                                        image_url VARCHAR(500),
                                         created_at TIMESTAMP DEFAULT NOW(),
 
                                         CONSTRAINT fk_products_type
@@ -81,17 +84,17 @@ INSERT INTO product_types (id, name, description) VALUES
 
                                                       (gen_random_uuid(), 'Addon', 'Extra toppings or add-ons');
 
-INSERT INTO products (name, price, type_id)
-SELECT 'Large Popcorn', 25.00, id FROM product_types WHERE name = 'Food';
+INSERT INTO products (name, price, type_id, image_url)
+SELECT 'Large Popcorn', 25.00, id, 'https://images.unsplash.com/photo-1578849278619-e73505e9610f?auto=format&fit=crop&q=80&w=300' FROM product_types WHERE name = 'Food';
 
-INSERT INTO products (name, price, type_id)
-SELECT 'Medium Popcorn', 20.00, id FROM product_types WHERE name = 'Food';
+INSERT INTO products (name, price, type_id, image_url)
+SELECT 'Medium Popcorn', 20.00, id, 'https://images.unsplash.com/photo-1578849278619-e73505e9610f?auto=format&fit=crop&q=80&w=300' FROM product_types WHERE name = 'Food';
 
-INSERT INTO products (name, price, type_id)
-SELECT 'Chocolate Bar', 12.00, id FROM product_types WHERE name = 'Food';
+INSERT INTO products (name, price, type_id, image_url)
+SELECT 'Chocolate Bar', 12.00, id, 'https://images.unsplash.com/photo-1511381939415-e44015466834?auto=format&fit=crop&q=80&w=300' FROM product_types WHERE name = 'Food';
 
-INSERT INTO products (name, price, type_id)
-SELECT 'Large Soda', 18.00, id FROM product_types WHERE name = 'Drink';
+INSERT INTO products (name, price, type_id, image_url)
+SELECT 'Large Soda', 18.00, id, 'https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&q=80&w=300' FROM product_types WHERE name = 'Drink';
 
-INSERT INTO products (name, price, type_id)
-SELECT 'Water Bottle', 8.00, id FROM product_types WHERE name = 'Drink';
+INSERT INTO products (name, price, type_id, image_url)
+SELECT 'Water Bottle', 8.00, id, 'https://images.unsplash.com/photo-1564414297-701a05a0551e?auto=format&fit=crop&q=80&w=300' FROM product_types WHERE name = 'Drink';

@@ -31,7 +31,19 @@ function UserPurchases() {
                         <h2>Purchases</h2>
                         <div>
                             {purchases ? <h2>Hello {purchases.map((purchase)=>{
-                                return <p>{purchase.itemProductName}</p>
+                                let item = purchase.items;
+
+                                return (
+                                    <Card>{JSON.stringify(purchase.items)}
+                                        {
+                                            item.map((item)=>{
+
+
+                                            })
+                                        }
+
+                                    </Card>
+                                )
                             })} </h2> : <p>Loading...</p>}
                         </div>
                     </Card>

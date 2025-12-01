@@ -11,13 +11,13 @@ public class FoodProduct extends Product {
 
     private List<FoodProduct> addOns;
 
-    public FoodProduct(UUID productId, String name, String type, BigDecimal price) {
-        super(productId, name, type, price);
+    public FoodProduct(UUID productId, String name, String type, BigDecimal price, int quantity, boolean available) {
+        super(productId, name, type, price, quantity, available);
         this.addOns = new ArrayList<>();
     }
 
     public FoodProduct(ProductRecord record) {
-        super(record.productId(), record.name(), record.type(), record.price());
+        super(record.productId(), record.name(), record.type(), record.price(), record.quantity(), record.available());
         this.addOns = new ArrayList<>();
 
         if (record.addOns() != null && !record.addOns().isEmpty()) {
