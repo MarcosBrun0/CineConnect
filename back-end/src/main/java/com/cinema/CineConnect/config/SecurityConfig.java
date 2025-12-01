@@ -71,6 +71,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/movie").permitAll()
                         .requestMatchers("/api/register").permitAll()
                         .requestMatchers("/api/createcart").permitAll()
+                        .requestMatchers("/api/products").permitAll()
+                        .requestMatchers("/api/me/purchases").permitAll()
                         .anyRequest().authenticated()
                 );
 

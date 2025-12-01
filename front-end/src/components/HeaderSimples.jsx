@@ -9,6 +9,14 @@ export function HeaderSimples() {
         nav("/login");
     }
 
+    const gotoStore=()=>{
+        nav("/store");
+    }
+
+    const gotoStart=()=>{
+        nav("/");
+    }
+
     const gotoRegister=()=>{
         nav("/register");
     }
@@ -33,10 +41,11 @@ export function HeaderSimples() {
         {/* Links de Navegação */}
         <Group gap={0} justify="flex-center" wrap="nowrap" className="hidden sm:flex">
           <Button variant="subtle">
-            <a href="#" className="text-gray-500 transition hover:text-gray-500/75">Movies</a>
+            <a href="#" className="text-gray-500 transition hover:text-gray-500/75" onClick={gotoStart}>Movies</a>
           </Button>
           <Button variant="subtle">
-            <a href="#" className="text-gray-500 transition hover:text-gray-500/75">Store</a>
+            <a href="#" className="text-gray-500 transition hover:text-gray-500/75" onClick={gotoStore}>Store</a>
+
           </Button>
         </Group>
 

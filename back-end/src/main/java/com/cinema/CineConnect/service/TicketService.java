@@ -23,4 +23,6 @@ public class TicketService {
         System.out.println("Confirming purchase: " + purchaseId);
         purchaseRepository.updateStatus(purchaseId, "PAID");
     }
+
+
 }

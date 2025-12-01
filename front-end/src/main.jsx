@@ -4,12 +4,16 @@ import App from './App.jsx'
 import { MantineProvider } from '@mantine/core';
 import '@mantine/core/styles.css';
 import './index.css'
+import {CartProvider} from "./context/CartContext";
 
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+
       <MantineProvider>
-    <App />
+          <CartProvider>
+          <App />
+          </CartProvider>
       </MantineProvider>
   </StrictMode>
 )

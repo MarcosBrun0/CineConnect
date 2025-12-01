@@ -8,6 +8,13 @@ import UserDashboard from "./pages/private/user/UserDashboard";
 
 import Homepage from './pages/public/Homepage';
 import AdminDashboard from "./pages/private/Admin/AdminDashboard";
+import CheckoutForm from "./components/CheckoutForm";
+import StorePage from "./pages/private/store/StorePage";
+import Cart from "./pages/private/Cart";
+import PaymentPage from "./pages/private/payment/PaymentPage";
+import CartDisplay from "./pages/CartDisplay";
+import Purchases from "./pages/private/Purchases";
+
 
 function App() {
   const [count, setCount] = useState(0)
@@ -19,8 +26,10 @@ function App() {
         <Route path="/login" element={<Layout><UserLogin /></Layout>}></Route>
         <Route path="/register" element={<Layout><UserRegister /></Layout>}></Route>
         <Route path="/user/dashboard" element={<Layout><UserDashboard /></Layout>}></Route>
-        <Route path="/" element={<Layout><Homepage/></Layout>}></Route>
-
+        <Route path="/" element={<Layout><Homepage/></Layout>}></Route><Route path="/" element={<Layout><Homepage/></Layout>}></Route>
+          <Route path="/store" element={<Layout><StorePage/>aaa<CartDisplay/></Layout>}></Route>
+          <Route path="/checkout" element={<Layout><PaymentPage/></Layout>}></Route>
+          <Route path="/user/purchases" element={<Layout><Purchases/></Layout>}></Route>
 
       </Routes>
     </Router>

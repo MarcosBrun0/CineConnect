@@ -68,6 +68,7 @@ public class StripeController {
             if ("succeeded".equals(paymentIntent.getStatus())) {
                 String purchaseIdStr = paymentIntent.getMetadata().get("purchaseId");
                 if (purchaseIdStr != null) {
+
                     ticketService.confirmPurchase(UUID.fromString(purchaseIdStr));
                     return ResponseEntity.ok("Payment confirmed and purchase fulfilled");
                 } else {

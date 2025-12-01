@@ -47,7 +47,8 @@ public class StripeService {
                     productRecord.name(),
                     productRecord.type(),
                     productRecord.price());
-            case "FOOD" -> new FoodProduct(productRecord);
+            case "Food" -> new FoodProduct(productRecord);
+            case "Drink" -> new FoodProduct(productRecord);
             default -> throw new RuntimeException("Invalid product type " + productRecord.type());
         };
     }
