@@ -80,6 +80,40 @@ export function PaymentPage() {
     return (
         <div className="p-8 flex flex-col items-center">
             <h1 className="text-2xl font-bold mb-6">Payment</h1>
+
+            {/* Cart Summary */}
+            <div className="w-full max-w-md mb-8 bg-white p-4 rounded-lg shadow border border-gray-200">
+                <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
+                <div className="space-y-4">
+                    {cart.map((item, index) => (
+                        <div key={index} className="flex justify-between items-start border-b border-gray-100 pb-2 last:border-0">
+                            <div className="flex-1">
+                                <div className="font-medium">{item.product.name}</div>
+                                <div className="text-sm text-gray-500">Qty: {item.quantity}</div>
+                                {item.addons && item.addons.length > 0 && (
+                                    <div className="text-xs text-gray-400 mt-1">
+                                        {item.addons.map(a => `+ ${a.name}`).join(', ')}
+                                    </div>
+                                )}
+                            </div>
+                            <div className="font-medium">
+                                ${(item.product.price * item.quantity + (item.addons ? item.addons.reduce((sum, a) => sum + a.price, 0) : 0)).toFixed(2)}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between font-bold text-lg">
+                    <span>Total</span>
+                    <span>
+                        ${cart.reduce((total, item) => {
+                            const itemTotal = item.product.price * item.quantity;
+                            const addonsTotal = item.addons ? item.addons.reduce((sum, a) => sum + a.price, 0) : 0;
+                            return total + itemTotal + addonsTotal;
+                        }, 0).toFixed(2)}
+                    </span>
+                </div>
+            </div>
+
             {clientSecret && (
                 <Elements options={options} stripe={stripePromise}>
                     <CheckoutForm />

@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS cart_items (
 );
 
 -- Addons table
-CREATE TABLE IF NOT EXISTS addons (
+CREATE TABLE IF NOT EXISTS cart_addons (
                                       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                                       cart_item_id UUID NOT NULL,
                                       product_id UUID NOT NULL,

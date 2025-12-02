@@ -1,39 +1,59 @@
-import { ActionIcon, Container, Group, Button } from '@mantine/core';
-
-import {useNavigate} from "react-router-dom";
+import { ActionIcon, Container, Group, Button, Menu, Avatar } from '@mantine/core';
+import { useState, useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
+import api from "../api"; // Adjust path if needed, usually ../api or ../../api depending on folder structure. 
+// Checking file location: front-end/src/components/HeaderSimples.jsx. api.js is in front-end/src/api.js. So it should be ../api
 
 export function HeaderSimples() {
-    const nav = useNavigate();
+  const nav = useNavigate();
+  const [user, setUser] = useState(null);
 
-    const gotoLogin=()=>{
-        nav("/login");
-    }
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await api.get("/api/me");
+        setUser(response.data);
+      } catch (error) {
+        // Not logged in or error
+        setUser(null);
+      }
+    };
+    fetchUser();
+  }, []);
 
-    const gotoStore=()=>{
-        nav("/store");
-    }
+  const gotoLogin = () => {
+    nav("/login");
+  }
 
-    const gotoStart=()=>{
-        nav("/");
-    }
+  const gotoStore = () => {
+    nav("/store");
+  }
 
-    const gotoRegister=()=>{
-        nav("/register");
-    }
+  const gotoStart = () => {
+    nav("/");
+  }
+
+  const gotoRegister = () => {
+    nav("/register");
+  }
+
+  const gotoDashboard = () => {
+    nav("/user/dashboard");
+  }
 
   return (
     <div className="border-b border-gray-200 py-1 bg-gray-50">
       <Container className="flex items-center justify-between">
-        
+
         {/*
           AJUSTE: Agrupando a logo e o texto em um link (prática padrão)
           e usando 'gap="xs"' para manter os elementos próximos.
         */}
         <a href="/" className="flex items-center space-x-2 text-gray-900 no-underline">
-          <img 
-            src="/logo.svg" 
+          <img
+            src="/logo.svg"
             style={{ height: '35px', width: "auto" }} /* Ajuste a altura para 35px */
-            alt="CineConnect Logo" 
+            alt="CineConnect Logo"
           />
           <span className="text-xl font-semibold">CineConnect</span>
         </a>
@@ -51,9 +71,15 @@ export function HeaderSimples() {
 
         {/* Botões de Ação */}
         <Group gap={0} justify="flex-end" wrap="nowrap">
-          <Button variant="outline" size="xs" onClick={gotoRegister}>Register</Button>
-          <div className="pl-1"></div>
-          <Button variant="filled" size="xs" onClick={gotoLogin}>Login</Button>
+          {user ? (
+            <Button variant="outline" size="xs" onClick={gotoDashboard}>Account</Button>
+          ) : (
+            <>
+              <Button variant="outline" size="xs" onClick={gotoRegister}>Register</Button>
+              <div className="pl-1"></div>
+              <Button variant="filled" size="xs" onClick={gotoLogin}>Login</Button>
+            </>
+          )}
         </Group>
 
       </Container>

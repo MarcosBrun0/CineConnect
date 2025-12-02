@@ -21,7 +21,7 @@ public class PurchaseController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/api/me/purchases")
-    public List<Purchase> findMe(@AuthenticationPrincipal Jwt jwt) {
+    public List<Purchase> getPurchases(@AuthenticationPrincipal Jwt jwt) {
         UUID uuid = UUID.fromString(jwt.getSubject());
         System.out.println(purchaseRepository.retrieveUserPurchases(uuid));
         return purchaseRepository.retrieveUserPurchases(uuid);

@@ -1,10 +1,12 @@
-import {Card, Paper, Stack} from '@mantine/core';
+import { Card, Paper, Stack, Button } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import api from "../../../api";
-import {Calendar} from "@mantine/dates";
+import { Calendar } from "@mantine/dates";
+import { useNavigate } from 'react-router-dom';
 
 function ClientDashboard() {
     const [user, setUser] = useState(null);
+    const nav = useNavigate();
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -24,10 +26,12 @@ function ClientDashboard() {
     return (
         <div>
             <Stack gap="sm">
-            <Card shadow="sm" withBorder radius="md">
-                <h2>User Dashboard</h2>
-
-            </Card>
+                <Card shadow="sm" withBorder radius="md">
+                    <h2>User Dashboard</h2>
+                    <Button variant="light" color="blue" mt="md" onClick={() => nav("/user/purchases")}>
+                        My Purchases
+                    </Button>
+                </Card>
 
                 <div>
                     {user ? (

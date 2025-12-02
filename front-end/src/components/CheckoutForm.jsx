@@ -6,15 +6,15 @@ import {
 } from "@stripe/react-stripe-js";
 import { Button, Alert } from "@mantine/core";
 import api from "../api";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function CheckoutForm() {
     const stripe = useStripe();
     const elements = useElements();
     const nav = useNavigate();
 
-    const gotoDashboard=()=>{
-        nav("/user/dashboard");
+    const gotoDashboard = () => {
+        nav("/user/purchases");
     }
     const [message, setMessage] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -78,7 +78,7 @@ export default function CheckoutForm() {
             elements,
             confirmParams: {
                 // Make sure to change this to your payment completion page
-                return_url: `${window.location.origin}/payment`,
+                return_url: `${window.location.origin}/checkout`,
             },
         });
 

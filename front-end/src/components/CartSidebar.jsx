@@ -86,7 +86,10 @@ function CartSidebar({ opened, onClose }) {
                 <Text fw={700} size="lg" c="blue">${getTotalPrice().toFixed(2)}</Text>
             </Group>
 
-            <Button fullWidth size="md" disabled={cart.length === 0}>
+            <Button fullWidth size="md" disabled={cart.length === 0} onClick={() => {
+                onClose();
+                window.location.href = "/checkout"; // Using window.location for simplicity or use useNavigate if inside Router context
+            }}>
                 Checkout
             </Button>
         </Drawer>

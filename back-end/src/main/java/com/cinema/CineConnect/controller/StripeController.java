@@ -22,11 +22,14 @@ public class StripeController {
     private final StripeService stripeService;
     private final TicketService ticketService;
     private final UserRepository userRepository;
+    private final com.cinema.CineConnect.service.CartService cartService;
 
-    public StripeController(StripeService stripeService, TicketService ticketService, UserRepository userRepository) {
+    public StripeController(StripeService stripeService, TicketService ticketService, UserRepository userRepository,
+            com.cinema.CineConnect.service.CartService cartService) {
         this.stripeService = stripeService;
         this.ticketService = ticketService;
         this.userRepository = userRepository;
+        this.cartService = cartService;
     }
 
     // Checkout Session
@@ -67,9 +70,19 @@ public class StripeController {
             PaymentIntent paymentIntent = stripeService.retrievePaymentIntent(paymentIntentId);
             if ("succeeded".equals(paymentIntent.getStatus())) {
                 String purchaseIdStr = paymentIntent.getMetadata().get("purchaseId");
-                if (purchaseIdStr != null) {
+                String userIdStr = paymentIntent.getMetadata().get("userId");
 
+                if (purchaseIdStr != null) {
+                    System.out.println("Confirming purchase: " + purchaseIdStr);
                     ticketService.confirmPurchase(UUID.fromString(purchaseIdStr));
+
+                    if (userIdStr != null) {
+                        System.out.println("Clearing cart for user: " + userIdStr);
+                        cartService.clearCart(UUID.fromString(userIdStr));
+                    } else {
+                        System.out.println("UserId not found in metadata");
+                    }
+
                     return ResponseEntity.ok("Payment confirmed and purchase fulfilled");
                 } else {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

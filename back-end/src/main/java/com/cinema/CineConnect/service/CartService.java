@@ -67,6 +67,16 @@ public class CartService {
         cartRepository.updateCartPrice(cartId);
     }
 
+    @Transactional
+    public void clearCart(UUID userId) {
+        System.out.println("CartService: Clearing cart for user " + userId);
+        UUID cartId = getOrCreateCartId(userId);
+        System.out.println("CartService: Cart ID is " + cartId);
+        cartRepository.clearCart(cartId);
+        cartRepository.updateCartPrice(cartId);
+        System.out.println("CartService: Cart cleared and price updated");
+    }
+
     private UUID getOrCreateCartId(UUID userId) {
         UUID cartId = cartRepository.findByUserId(userId);
         if (cartId == null) {
