@@ -5,10 +5,17 @@ import tailwindcss from "@tailwindcss/vite";
 // https://vite.dev/config/
 export default defineConfig({
     plugins: [tailwindcss(),
-        react()],
+    react()],
     server: {
         allowedHosts: ['cineconnect.com'],
         host: true,          // allow external hostnames
         strictPort: false,   // optional
+        proxy: {
+            '/api': {
+                target: 'http://localhost:8080',
+                changeOrigin: true,
+                secure: false,
+            }
+        }
     },
 });

@@ -32,7 +32,6 @@ import java.util.UUID;
         }
 
         @PreAuthorize("isAuthenticated()")
-        //Any user can make a request,as long as they are logged in
         @GetMapping("/api/me")
         public Optional<UserRecordRoleName> findMe(@AuthenticationPrincipal Jwt jwt) {
             UUID uuid = UUID.fromString(jwt.getSubject());

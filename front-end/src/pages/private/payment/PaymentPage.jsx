@@ -27,13 +27,21 @@ export function PaymentPage() {
             try {
                 setIsLoading(true);
                 // Map cart to ProductRecord format expected by backend
+                // Map cart to ProductRecord format expected by backend
                 const productRecords = cart.map(item => ({
-                    productId: item.productId,
-                    name: item.name,
-                    type: item.type,
-                    price: item.price,
-                    sessionId: item.sessionId, // Ensure this exists in cart item
-                    // Add other fields if necessary
+                    productId: item.product.id,
+                    name: item.product.name,
+                    type: item.product.type,
+                    price: item.product.price,
+                    sessionId: item.product.sessionId,
+                    imageUrl: item.product.imageUrl,
+                    addOns: item.addons ? item.addons.map(addon => ({
+                        productId: addon.id,
+                        name: addon.name,
+                        type: addon.type,
+                        price: addon.price,
+                        imageUrl: addon.imageUrl
+                    })) : []
                 }));
 
                 const response = await api.post("/api/stripe/create-payment-intent", productRecords);

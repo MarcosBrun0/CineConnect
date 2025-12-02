@@ -96,10 +96,10 @@ public class StripeService {
                 .setPriceData(
                         SessionCreateParams.LineItem.PriceData.builder()
                                 .setCurrency("brl")
-                                .setUnitAmount(product.getProductPrice().multiply(new BigDecimal(100)).longValue())
+                                .setUnitAmount(product.getPrice().multiply(new BigDecimal(100)).longValue())
                                 .setProductData(
                                         SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                                                .setName(prefixName + product.getProductName())
+                                                .setName(prefixName + product.getName())
                                                 .build())
                                 .build())
                 .setQuantity(1L)
@@ -113,24 +113,24 @@ public class StripeService {
 
         for (ProductRecord productRecord : cart) {
             Product product = processProduct(productRecord);
-            long itemAmount = product.getProductPrice().multiply(new BigDecimal(100)).longValue();
+            long itemAmount = product.getPrice().multiply(new BigDecimal(100)).longValue();
             totalAmount += itemAmount;
 
             PurchaseItem item = new PurchaseItem();
             item.setProductId(productRecord.productId());
             item.setQuantity(1); // Assuming 1 for now based on cart structure
-            item.setPriceAtPurchase(product.getProductPrice());
+            item.setPriceAtPurchase(product.getPrice());
 
             if (product instanceof FoodProduct foodProduct && foodProduct.getAddOns() != null) {
                 List<PurchaseItem> addOns = new ArrayList<>();
                 for (FoodProduct addOn : foodProduct.getAddOns()) {
-                    long addOnAmount = addOn.getProductPrice().multiply(new BigDecimal(100)).longValue();
+                    long addOnAmount = addOn.getPrice().multiply(new BigDecimal(100)).longValue();
                     totalAmount += addOnAmount;
 
                     PurchaseItem addOnItem = new PurchaseItem();
-                    addOnItem.setProductId(addOn.getProductProductId()); // Assuming ID is available or mapped
+                    addOnItem.setProductId(addOn.getId()); // Assuming ID is available or mapped
                     addOnItem.setQuantity(1);
-                    addOnItem.setPriceAtPurchase(addOn.getProductPrice());
+                    addOnItem.setPriceAtPurchase(addOn.getPrice());
                     addOns.add(addOnItem);
                 }
                 item.setAddons(addOns);

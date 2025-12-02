@@ -1,28 +1,67 @@
 import { useEffect, useState } from 'react';
-import { Card, Image, Text, Badge, Button, Group, SimpleGrid, Container, Title, Loader, Center } from '@mantine/core';
-import { IconShoppingCart } from '@tabler/icons-react';
+import { Card, Image, Text, Badge, Button, Group, SimpleGrid, Container, Title, Loader, Center, Modal, Checkbox, Stack, ActionIcon } from '@mantine/core';
+import { IconShoppingCart, IconShoppingBag } from '@tabler/icons-react';
+import { useDisclosure } from '@mantine/hooks';
 import api from '../../../api';
 import { useCart } from '../../../context/CartContext';
+import CartSidebar from '../../../components/CartSidebar';
 
 function StorePage() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
-    const { addToCart } = useCart();
+    const { addToCart, cart } = useCart();
+
+    // Addon Modal State
+    const [opened, { open, close }] = useDisclosure(false);
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [selectedAddons, setSelectedAddons] = useState([]);
+
+    // Cart Sidebar State
+    const [cartOpened, { open: openCart, close: closeCart }] = useDisclosure(false);
 
     useEffect(() => {
-        const fetchProducts = async () => {
+        const fetchData = async () => {
             try {
-                const response = await api.get('/api/products');
-                setProducts(response.data);
+                const [productsRes] = await Promise.all([
+                    api.get('/api/products')
+                ]);
+                setProducts(productsRes.data);
             } catch (error) {
-                console.error("Error fetching products:", error);
+                console.error("Error fetching data:", error);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchProducts();
+        fetchData();
     }, []);
+
+    const handleAddToCartClick = (product) => {
+        if (product.type === 'Food') {
+            setSelectedProduct(product);
+            setSelectedAddons([]);
+            open();
+        } else {
+            addToCart(product);
+        }
+    };
+
+    const confirmAddToCart = () => {
+        if (selectedProduct) {
+            addToCart(selectedProduct, 1, selectedAddons);
+            close();
+            setSelectedProduct(null);
+            setSelectedAddons([]);
+        }
+    };
+
+    const toggleAddon = (addonId) => {
+        setSelectedAddons((prev) =>
+            prev.includes(addonId)
+                ? prev.filter(id => id !== addonId)
+                : [...prev, addonId]
+        );
+    };
 
     if (loading) {
         return (
@@ -41,7 +80,10 @@ function StorePage() {
                         <Card.Section>
                             <Image
                                 src={product.imageUrl || "https://placehold.co/300x200?text=No+Image"}
-                                height={160}
+                                h={160}
+                                w="100%"
+                                fit="contain"
+                                bg="gray.0"
                                 alt={product.name}
                                 fallbackSrc="https://placehold.co/300x200?text=No+Image"
                             />
@@ -69,7 +111,7 @@ function StorePage() {
                             mt="md"
                             radius="md"
                             leftSection={<IconShoppingCart size={18} />}
-                            onClick={() => addToCart(product)}
+                            onClick={() => handleAddToCartClick(product)}
                             disabled={!product.available}
                         >
                             {product.available ? 'Add to Cart' : 'Unavailable'}
@@ -77,6 +119,46 @@ function StorePage() {
                     </Card>
                 ))}
             </SimpleGrid>
+
+            <Modal opened={opened} onClose={close} title={`Addons for ${selectedProduct?.name}`}>
+                <Stack>
+                    <Text size="sm" mb="xs">Select extra toppings or add-ons:</Text>
+                    {selectedProduct?.addOns?.map(addon => (
+                        <Checkbox
+                            key={addon.productId}
+                            label={`${addon.name} (+$${addon.price.toFixed(2)})`}
+                            checked={selectedAddons.includes(addon.productId)}
+                            onChange={() => toggleAddon(addon.productId)}
+                        />
+                    ))}
+                    <Button fullWidth mt="md" onClick={confirmAddToCart}>
+                        Confirm & Add to Cart
+                    </Button>
+                </Stack>
+            </Modal>
+
+            <CartSidebar opened={cartOpened} onClose={closeCart} />
+
+            <ActionIcon
+                color="blue"
+                size="xl"
+                radius="xl"
+                variant="filled"
+                style={{ position: 'fixed', bottom: 30, right: 30, zIndex: 1000 }}
+                onClick={openCart}
+            >
+                <IconShoppingBag size={24} />
+                {cart.length > 0 && (
+                    <Badge
+                        size="xs"
+                        circle
+                        color="red"
+                        style={{ position: 'absolute', top: -5, right: -5 }}
+                    >
+                        {cart.length}
+                    </Badge>
+                )}
+            </ActionIcon>
         </Container>
     );
 }

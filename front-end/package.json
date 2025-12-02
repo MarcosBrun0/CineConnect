@@ -4,7 +4,7 @@
     "@mantine/core": "^8.3.4",
     "@mantine/dates": "^8.3.4",
     "@mantine/form": "^8.3.4",
-    "@mantine/hooks": "^8.3.4",
+    "@mantine/hooks": "^8.3.9",
     "@mantine/spotlight": "^8.3.4",
     "@material-tailwind/react": "^2.1.10",
     "@stripe/react-stripe-js": "^5.4.1",

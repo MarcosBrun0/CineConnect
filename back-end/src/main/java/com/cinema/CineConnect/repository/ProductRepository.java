@@ -52,8 +52,23 @@ public class ProductRepository {
         return true;
     }
 
-    public List<ProductRecord> findAll() {
+    private List<ProductRecord> getAddonsForProduct(UUID productId) {
         return jdbcClient.sql("""
+                    SELECT p.id as productId, p.name, pt.name as type, p.price, image_url, p.quantity, p.available,
+                           CAST(NULL AS UUID) as sessionId,
+                           CAST(NULL AS varchar) as addOns
+                    FROM product_addons pa
+                    JOIN products p ON pa.addon_id = p.id
+                    JOIN product_types pt ON p.type_id = pt.id
+                    WHERE pa.product_id = :productId
+                """)
+                .param("productId", productId)
+                .query(ProductRecord.class)
+                .list();
+    }
+
+    public List<ProductRecord> findAll() {
+        List<ProductRecord> products = jdbcClient.sql("""
                     SELECT p.id as productId, p.name, pt.name as type, p.price, image_url, p.quantity, p.available,
                            CAST(NULL AS UUID) as sessionId,
                            CAST(NULL AS varchar) as addOns
@@ -62,6 +77,10 @@ public class ProductRepository {
                 """)
                 .query(ProductRecord.class)
                 .list();
+
+        return products.stream().map(p -> new ProductRecord(
+                p.productId(), p.name(), p.type(), p.price(), p.quantity(), p.available(), p.sessionId(), p.imageUrl(),
+                getAddonsForProduct(p.productId()))).toList();
     }
 
     public Integer getQuantityById(UUID productId) {
@@ -97,13 +116,48 @@ public class ProductRepository {
                 .list();
     }
 
+    public List<ProductRecord> findProductsByType(String typeName) {
+        List<ProductRecord> products = jdbcClient.sql("""
+                    SELECT p.id as productId, p.name, pt.name as type, p.price, image_url, p.quantity, p.available,
+                           CAST(NULL AS UUID) as sessionId,
+                           CAST(NULL AS varchar) as addOns
+                    FROM products p
+                    JOIN product_types pt ON p.type_id = pt.id
+                    WHERE pt.name = :typeName
+                """)
+                .param("typeName", typeName)
+                .query(ProductRecord.class)
+                .list();
+
+        return products.stream().map(p -> new ProductRecord(
+                p.productId(), p.name(), p.type(), p.price(), p.quantity(), p.available(), p.sessionId(), p.imageUrl(),
+                getAddonsForProduct(p.productId()))).toList();
+    }
+
+    public ProductRecord findById(UUID id) {
+        ProductRecord p = jdbcClient.sql("""
+                    SELECT p.id as productId, p.name, pt.name as type, p.price, image_url, p.quantity, p.available,
+                           CAST(NULL AS UUID) as sessionId,
+                           CAST(NULL AS varchar) as addOns
+                    FROM products p
+                    JOIN product_types pt ON p.type_id = pt.id
+                    WHERE p.id = :id
+                """)
+                .param("id", id)
+                .query(ProductRecord.class)
+                .single();
+
+        return new ProductRecord(
+                p.productId(), p.name(), p.type(), p.price(), p.quantity(), p.available(), p.sessionId(), p.imageUrl(),
+                getAddonsForProduct(p.productId()));
+    }
+
     public List<TypeCount> listTypesWithCount() {
         return jdbcClient.sql("""
                     SELECT pt.id, pt.name, COUNT(p.id) AS total
                     FROM product_types pt
                     LEFT JOIN products p ON p.type_id = pt.id
                     GROUP BY pt.id, pt.name
-                    ORDER BY pt.name
                 """)
                 .query(TypeCount.class)
                 .list();

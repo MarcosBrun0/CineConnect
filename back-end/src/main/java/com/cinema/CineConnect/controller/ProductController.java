@@ -22,4 +22,9 @@ public class ProductController {
     public List<ProductRecord> findAll() {
         return productRepository.findAll();
     }
+
+    @GetMapping("/addons")
+    public List<ProductRecord> getAddons() {
+        return productRepository.findProductsByType("Addon");
+    }
 }

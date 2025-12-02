@@ -20,23 +20,23 @@ public abstract class Product {
         this.available = available;
     }
 
-    public String getProductName() {
+    public String getName() {
         return name;
     }
 
-    public String getProductType() {
+    public String getType() {
         return type;
     }
 
-    public BigDecimal getProductPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setProductPrice(BigDecimal price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
-    public UUID getProductProductId() {
+    public UUID getId() {
         return productId;
     }
 
@@ -56,4 +56,13 @@ public abstract class Product {
         this.available = available;
     }
 
+    String imageUrl;
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }

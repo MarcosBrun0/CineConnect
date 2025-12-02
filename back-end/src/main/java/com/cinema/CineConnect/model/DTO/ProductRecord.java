@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.UUID;
 
 public record ProductRecord(
-                UUID productId,
-                String name,
-                String type,
-                BigDecimal price,
-                int quantity,
-                boolean available,
-                UUID sessionId,
-                String image_url,
-                List<ProductRecord> addOns) {
+        UUID productId,
+        String name,
+        String type,
+        BigDecimal price,
+        int quantity,
+        boolean available,
+        UUID sessionId,
+        String imageUrl,
+        List<ProductRecord> addOns) {
 }
