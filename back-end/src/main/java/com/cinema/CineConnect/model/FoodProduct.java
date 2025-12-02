@@ -37,4 +37,9 @@ public class FoodProduct extends Product {
     public List<FoodProduct> getAddOns() {
         return addOns;
     }
+
+    @Override
+    public List<Product> getInfo() {
+        return new ArrayList<>(addOns);
+    }
 }

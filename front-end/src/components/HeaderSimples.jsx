@@ -1,24 +1,23 @@
-import { ActionIcon, Container, Group, Button, Menu, Avatar } from '@mantine/core';
+import { ActionIcon, Container, Group, Button } from '@mantine/core';
 import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
-import api from "../api"; // Adjust path if needed, usually ../api or ../../api depending on folder structure. 
-// Checking file location: front-end/src/components/HeaderSimples.jsx. api.js is in front-end/src/api.js. So it should be ../api
+import api from "../api";
 
 export function HeaderSimples() {
   const nav = useNavigate();
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const checkLogin = async () => {
       try {
         const response = await api.get("/api/me");
         setUser(response.data);
       } catch (error) {
-        // Not logged in or error
+        // Not logged in
         setUser(null);
       }
     };
-    fetchUser();
+    checkLogin();
   }, []);
 
   const gotoLogin = () => {
@@ -72,7 +71,7 @@ export function HeaderSimples() {
         {/* Botões de Ação */}
         <Group gap={0} justify="flex-end" wrap="nowrap">
           {user ? (
-            <Button variant="outline" size="xs" onClick={gotoDashboard}>Account</Button>
+            <Button variant="filled" size="xs" onClick={gotoDashboard}>Account</Button>
           ) : (
             <>
               <Button variant="outline" size="xs" onClick={gotoRegister}>Register</Button>

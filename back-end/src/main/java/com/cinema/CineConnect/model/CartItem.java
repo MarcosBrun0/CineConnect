@@ -42,7 +42,19 @@ public class CartItem {
 
     public void addAddon(Product addon) {
         addons.add(addon);
-        totalPrice = totalPrice.add(addon.getPrice());
+        // Recalculate total price based on quantity and addons
+        // Base price * quantity + addons
+        // Note: Usually addons are per item, so if quantity is > 1, addons might be
+        // multiplied too.
+        // Assuming addons are single instances added to the cart item which represents
+        // a group of products.
+        // However, the current logic seems to treat CartItem as a line item.
+        // If I buy 2 Popcorns, and add 1 Butter, is it 1 Butter total or 1 Butter per
+        // Popcorn?
+        // The previous logic was: totalPrice = totalPrice.add(addon.getPrice());
+        // This implies simple addition. I will stick to that but make it explicit.
+
+        this.totalPrice = this.totalPrice.add(addon.getPrice());
     }
 
     public void removeAddon(Product addon) {

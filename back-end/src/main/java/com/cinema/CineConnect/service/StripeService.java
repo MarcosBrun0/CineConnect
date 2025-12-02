@@ -1,11 +1,10 @@
 package com.cinema.CineConnect.service;
 
 import com.cinema.CineConnect.model.DTO.ProductRecord;
-import com.cinema.CineConnect.model.FoodProduct;
 import com.cinema.CineConnect.model.Product;
-import com.cinema.CineConnect.model.Ticket;
 import com.cinema.CineConnect.model.Purchase;
 import com.cinema.CineConnect.model.PurchaseItem;
+import com.cinema.CineConnect.model.factory.ProductFactory;
 import com.cinema.CineConnect.repository.PurchaseRepository;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
@@ -39,37 +38,18 @@ public class StripeService {
         Stripe.apiKey = stripeSecretKey;
     }
 
-    public Product processProduct(ProductRecord productRecord) {
-        return switch (productRecord.type()) {
-            case "TICKET" -> new Ticket(
-                    productRecord.productId(),
-                    productRecord.sessionId(),
-                    productRecord.name(),
-                    productRecord.type(),
-                    productRecord.price());
-            case "Food" -> new FoodProduct(productRecord);
-            case "Drink" -> new FoodProduct(productRecord);
-            case "Addon" -> new FoodProduct(productRecord);
-            default -> throw new RuntimeException("Invalid product type " + productRecord.type());
-        };
-    }
-
     public String createCheckoutSession(List<ProductRecord> cart, String successUrl, String cancelUrl) {
         List<SessionCreateParams.LineItem> lineItems = new ArrayList<>();
 
         for (ProductRecord productRecord : cart) {
-            Product product = processProduct(productRecord);
+            Product product = ProductFactory.createProduct(productRecord);
 
             // Item principal
             lineItems.add(buildLineItem(product));
 
-            // Add-ons se existirem
-            if (product instanceof FoodProduct foodProduct) {
-                if (foodProduct.getAddOns() != null) {
-                    for (FoodProduct addOn : foodProduct.getAddOns()) {
-                        lineItems.add(buildLineItem(addOn, "Add-on: "));
-                    }
-                }
+            // Add-ons via polymorphism
+            for (Product addOn : product.getInfo()) {
+                lineItems.add(buildLineItem(addOn, "Add-on: "));
             }
         }
 
@@ -113,7 +93,7 @@ public class StripeService {
         Purchase purchase = new Purchase(userId, null, BigDecimal.ZERO, "PENDING");
 
         for (ProductRecord productRecord : cart) {
-            Product product = processProduct(productRecord);
+            Product product = ProductFactory.createProduct(productRecord);
             long itemAmount = product.getPrice().multiply(new BigDecimal(100)).longValue();
             totalAmount += itemAmount;
 
@@ -122,20 +102,18 @@ public class StripeService {
             item.setQuantity(1); // Assuming 1 for now based on cart structure
             item.setPriceAtPurchase(product.getPrice());
 
-            if (product instanceof FoodProduct foodProduct && foodProduct.getAddOns() != null) {
-                List<PurchaseItem> addOns = new ArrayList<>();
-                for (FoodProduct addOn : foodProduct.getAddOns()) {
-                    long addOnAmount = addOn.getPrice().multiply(new BigDecimal(100)).longValue();
-                    totalAmount += addOnAmount;
+            List<PurchaseItem> addOns = new ArrayList<>();
+            for (Product addOn : product.getInfo()) {
+                long addOnAmount = addOn.getPrice().multiply(new BigDecimal(100)).longValue();
+                totalAmount += addOnAmount;
 
-                    PurchaseItem addOnItem = new PurchaseItem();
-                    addOnItem.setProductId(addOn.getId()); // Assuming ID is available or mapped
-                    addOnItem.setQuantity(1);
-                    addOnItem.setPriceAtPurchase(addOn.getPrice());
-                    addOns.add(addOnItem);
-                }
-                item.setAddons(addOns);
+                PurchaseItem addOnItem = new PurchaseItem();
+                addOnItem.setProductId(addOn.getId());
+                addOnItem.setQuantity(1);
+                addOnItem.setPriceAtPurchase(addOn.getPrice());
+                addOns.add(addOnItem);
             }
+            item.setAddons(addOns);
             purchase.addItem(item);
         }
 

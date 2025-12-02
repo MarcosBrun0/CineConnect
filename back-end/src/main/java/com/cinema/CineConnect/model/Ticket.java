@@ -10,4 +10,9 @@ public class Ticket extends Product {
         super(productId, name, type, price, 100, true); // Default values for Ticket
         this.sessionId = sessionId;
     }
+
+    @Override
+    public java.util.List<Product> getInfo() {
+        return new java.util.ArrayList<>();
+    }
 }

@@ -28,13 +28,19 @@ public class Cart {
 
     public void addItem(CartItem item) {
         items.add(item);
-        price = price.add(item.getTotalPrice());
+        recalculatePrice();
     }
 
     public void removeItem(CartItem item) {
         if (items.remove(item)) {
-            price = price.subtract(item.getTotalPrice());
+            recalculatePrice();
         }
+    }
+
+    public void recalculatePrice() {
+        this.price = items.stream()
+                .map(CartItem::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     public UUID getId() {

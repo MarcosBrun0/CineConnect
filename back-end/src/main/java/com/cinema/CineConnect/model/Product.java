@@ -65,4 +65,6 @@ public abstract class Product {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
+    public abstract java.util.List<Product> getInfo();
 }
