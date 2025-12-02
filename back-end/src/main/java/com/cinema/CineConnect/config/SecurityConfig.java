@@ -68,6 +68,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/login").permitAll()
                         .requestMatchers("/api/movie/**").permitAll()
+                        .requestMatchers("/api/sessions/**").permitAll()
+                        .requestMatchers("/Çapi/tickets/**").permitAll()
                         .requestMatchers("/api/register").permitAll()
                         .requestMatchers("/uploads/**").permitAll() // Libera acesso às imagens
                         .anyRequest().authenticated()

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import MovieSessions from '../components/MovieSessions'; // <--- 1. IMPORTAR AQUI
 
 const MovieDetails = () => {
     const { id } = useParams();
@@ -17,16 +18,10 @@ const MovieDetails = () => {
         const fetchMovie = async () => {
             try {
                 const response = await axios.get(`${API_URL}/${id}`);
-
-                // DEBUG: Olhe no Console (F12) para ver como o nome da imagem está chegando
-                console.log("DADOS DO FILME RECEBIDOS:", response.data);
-
                 setMovie(response.data);
                 setLoading(false);
-
             } catch (err) {
                 console.error("Erro na requisição:", err);
-
                 if (err.response && err.response.status === 404) {
                     setError('Filme não encontrado no sistema.');
                 } else {
@@ -41,7 +36,7 @@ const MovieDetails = () => {
 
     if (loading) {
         return (
-            <div className="container" style={{textAlign: 'center', marginTop: '50px'}}>
+            <div className="container" style={{textAlign: 'center', marginTop: '50px', color: 'white'}}>
                 <p>Carregando detalhes...</p>
             </div>
         );
@@ -49,7 +44,7 @@ const MovieDetails = () => {
 
     if (error || !movie) {
         return (
-            <div className="container" style={{textAlign: 'center', marginTop: '50px'}}>
+            <div className="container" style={{textAlign: 'center', marginTop: '50px', color: 'white'}}>
                 <h2>Ops!</h2>
                 <p>{error}</p>
                 <button className="back-btn" onClick={() => navigate('/')}>&larr; Voltar ao início</button>
@@ -57,13 +52,10 @@ const MovieDetails = () => {
         );
     }
 
-    // LÓGICA DE CORREÇÃO:
-    // Tenta ler 'image_filename' (snake_case) OU 'imageFilename' (camelCase)
-    // Isso garante que funcione independente da configuração do seu Java.
     const imageName = movie.image_filename || movie.imageFilename;
 
     return (
-        <div className="container">
+        <div className="container" style={{ paddingBottom: '50px' }}>
             <button className="back-btn" onClick={() => navigate(-1)}>
                 &larr; Voltar
             </button>
@@ -71,11 +63,10 @@ const MovieDetails = () => {
             <div className="movie-detail-card">
                 <div className="detail-image-container">
                     <img
-                        src={imageName ? `${IMAGE_BASE_URL}${imageName}` : "https://img.freepik.com/fotos-gratis/um-belo-nascer-de-sol-na-praia-sob-um-ceu-azul_181624-26939.jpg?semt=ais_hybrid&w=740&q=80"}
+                        src={imageName ? `${IMAGE_BASE_URL}${imageName}` : "https://via.placeholder.com/350x500"}
                         alt={`Poster de ${movie.title}`}
                         className="detail-poster"
                         onError={(e) => {
-                            console.log("Falha ao carregar imagem:", e.target.src);
                             e.target.src = 'https://via.placeholder.com/350x500?text=Erro+Imagem';
                         }}
                     />
@@ -102,6 +93,11 @@ const MovieDetails = () => {
                         <p className="detail-synopsis-text">
                             {movie.synopsis}
                         </p>
+                    </div>
+
+                    {/* --- 2. ADICIONAR O COMPONENTE DE SESSÕES AQUI --- */}
+                    <div className="sessions-section-wrapper">
+                        <MovieSessions movieId={id} />
                     </div>
                 </div>
             </div>

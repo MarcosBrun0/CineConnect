@@ -39,6 +39,7 @@ const HomePage = () => {
                     ) : (
                         <div className="movies-grid">
                             {movies.map((movie) => (
+
                                 <MovieCard key={movie.id} movie={movie} />
                             ))}
                         </div>

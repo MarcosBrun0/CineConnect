@@ -9,6 +9,7 @@ import UserDashboard from "./pages/private/user/UserDashboard";
 import Homepage from './pages/public/Homepage';
 import AdminDashboard from "./pages/private/Admin/AdminDashboard";
 import MovieDetails from "./components/MovieDetails";
+import BookingPage from "./pages/public/BookingPage";
 
 function App() {
   const [count, setCount] = useState(0)
@@ -22,6 +23,7 @@ function App() {
               <Route path="/user/dashboard" element={<Layout><UserDashboard/></Layout>}></Route>
               <Route path="/" element={<Layout><Homepage/></Layout>}></Route>
               <Route path="/movie/:id" element={<MovieDetails />} />
+              <Route path="/booking/:sessionId" element={<BookingPage />} />
 
 
           </Routes>
