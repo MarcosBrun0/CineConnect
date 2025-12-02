@@ -1,19 +1,26 @@
 package com.cinema.CineConnect.service;
 
-import org.springframework.stereotype.Service;
-
+import com.cinema.CineConnect.model.DTO.BookingRequest;
 import com.cinema.CineConnect.repository.PurchaseRepository;
+import com.cinema.CineConnect.repository.TicketRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class TicketService {
 
     private final PurchaseRepository purchaseRepository;
     private final com.cinema.CineConnect.repository.ProductRepository productRepository;
+    private final TicketRepository ticketRepository;
 
     public TicketService(PurchaseRepository purchaseRepository,
-            com.cinema.CineConnect.repository.ProductRepository productRepository) {
+            com.cinema.CineConnect.repository.ProductRepository productRepository,
+            TicketRepository ticketRepository) {
         this.purchaseRepository = purchaseRepository;
         this.productRepository = productRepository;
+        this.ticketRepository = ticketRepository;
     }
 
     // Atualiza tickets/pedidos no banco de dados usando o sessionId do Stripe
@@ -50,4 +57,20 @@ public class TicketService {
         }
     }
 
+    public List<String> getOccupiedSeats(Long sessionId) {
+        return ticketRepository.findOccupiedSeats(sessionId);
+    }
+
+    @Transactional // Importante: Se um assento falhar, cancela tudo
+    public void bookTickets(BookingRequest request) {
+        List<String> occupied = ticketRepository.findOccupiedSeats(request.sessionId());
+
+        for (String seat : request.seats()) {
+            if (occupied.contains(seat)) {
+                throw new IllegalArgumentException("O assento " + seat + " já está ocupado.");
+            }
+            // Salva o ticket
+            ticketRepository.saveTicket(request.sessionId(), seat, request.clientName());
+        }
+    }
 }

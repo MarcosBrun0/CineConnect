@@ -39,6 +39,8 @@ back-end/.mvn/wrapper/maven-wrapper.jar
 
 app.key
 app.pub
+cineconnect.com-key.pem
+cineconnect.com.pem
 
 .DS_Store
 

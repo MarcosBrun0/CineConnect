@@ -61,20 +61,23 @@ public class SecurityConfig {
                         .jwt(Customizer.withDefaults())
                         .bearerTokenResolver(new CookieBearerTokenResolver()) // <-- MOVED INSIDE
                 )
-                // .bearerTokenResolver(new CookieBearerTokenResolver()) // <-- REMOVED FROM HERE
+                // .bearerTokenResolver(new CookieBearerTokenResolver()) // <-- REMOVED FROM
+                // HERE
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/login").permitAll()
-                        .requestMatchers("/api/preferences").permitAll()
-                        .requestMatchers("/api/movie").permitAll()
+                        .requestMatchers("/api/movie/**").permitAll()
+                        .requestMatchers("/api/sessions/**").permitAll()
+                        .requestMatchers("/api/tickets/**").permitAll()
                         .requestMatchers("/api/register").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers("/api/preferences").permitAll()
                         .requestMatchers("/api/createcart").permitAll()
                         .requestMatchers("/api/products").permitAll()
                         .requestMatchers("/api/me/purchases").permitAll()
-                        .anyRequest().authenticated()
-                );
+                        .anyRequest().authenticated());
 
         return http.build();
     }
