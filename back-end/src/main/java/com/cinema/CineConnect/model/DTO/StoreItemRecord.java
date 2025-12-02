@@ -4,14 +4,13 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
-public record ProductRecord(
+public record StoreItemRecord(
         UUID productId,
         String name,
         String type,
         BigDecimal price,
-        int quantity,
-        boolean available,
         UUID sessionId,
-        String imageUrl,
-        List<ProductRecord> addOns) {
+        String image_url,
+        List<ProductRecord> addOns
+) {
 }

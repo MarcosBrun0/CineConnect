@@ -41,7 +41,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
-        corsConfiguration.setAllowedOrigins(List.of("http://localhost:5173"));
+        corsConfiguration.setAllowedOrigins(List.of("https://cineconnect.com"));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfiguration.setAllowedHeaders(List.of("*"));
         corsConfiguration.setAllowCredentials(true);
@@ -61,7 +61,8 @@ public class SecurityConfig {
                         .jwt(Customizer.withDefaults())
                         .bearerTokenResolver(new CookieBearerTokenResolver()) // <-- MOVED INSIDE
                 )
-                // .bearerTokenResolver(new CookieBearerTokenResolver()) // <-- REMOVED FROM HERE
+                // .bearerTokenResolver(new CookieBearerTokenResolver()) // <-- REMOVED FROM
+                // HERE
                 .formLogin(form -> form.disable())
                 .httpBasic(basic -> basic.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -69,11 +70,14 @@ public class SecurityConfig {
                         .requestMatchers("/api/login").permitAll()
                         .requestMatchers("/api/movie/**").permitAll()
                         .requestMatchers("/api/sessions/**").permitAll()
-                        .requestMatchers("/Çapi/tickets/**").permitAll()
+                        .requestMatchers("/api/tickets/**").permitAll()
                         .requestMatchers("/api/register").permitAll()
-                        .requestMatchers("/uploads/**").permitAll() // Libera acesso às imagens
-                        .anyRequest().authenticated()
-                );
+                        .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers("/api/preferences").permitAll()
+                        .requestMatchers("/api/createcart").permitAll()
+                        .requestMatchers("/api/products").permitAll()
+                        .requestMatchers("/api/me/purchases").permitAll()
+                        .anyRequest().authenticated());
 
         return http.build();
     }
